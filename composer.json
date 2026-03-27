@@ -2,7 +2,7 @@
   "name": "archipatel-sketch/crud",
   "description": "Dynamic CRUD generator for Laravel",
   "license": "MIT",
-  "type": "library",
+  "version": "1.0.1",
   "authors": [
     {
       "name": "archipatel-sketch",
@@ -12,7 +12,8 @@
   "require": {
     "php": ">=8.1",
     "illuminate/support": "^10.0|^11.0|^12.0",
-    "maatwebsite/excel": "^3.2"
+    "barryvdh/laravel-dompdf": "*",
+    "maatwebsite/excel": "*"
   },
   "autoload": {
     "files": [
@@ -26,7 +27,8 @@
     "laravel": {
       "providers": [
         "ArchipatelSketch\\Crud\\Providers\\CrudServiceProvider"
-      ]
+      ],
+      "aliases": {}
     }
   },
   "minimum-stability": "stable"
