@@ -35,6 +35,17 @@ class CrudServiceProvider extends ServiceProvider
 
         // Register commands
         $this->registerCommands();
+        
+        // Publish config
+    $this->publishes([
+        __DIR__ . '/../Config/form-fields.php' => config_path('form-fields.php'),
+    ], 'crud-config');
+
+    // Merge default config so it's available even if not published
+    $this->mergeConfigFrom(
+        __DIR__ . '/../Config/form-fields.php',
+        'form-fields'
+    );
     }
 
     public function register()

@@ -21,7 +21,7 @@ A Laravel package to perform **dynamic CRUD operations** with configurable form 
 1. **Require the package via Composer:**
 
 ```
-composer require archipatel-sketch/crud
+composer require archipatel-sketch/crud:dev-main
 ```
 ```
 php artisan vendor:publish --provider="ArchipatelSketch\Crud\Providers\CrudServiceProvider"
