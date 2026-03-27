@@ -20,11 +20,13 @@ A Laravel package to perform **dynamic CRUD operations** with configurable form 
 
 1. **Require the package via Composer:**
 
-```bash
+```
 composer require archipatel-sketch/crud
-
+```
+```
 php artisan vendor:publish --provider="ArchipatelSketch\Crud\Providers\CrudServiceProvider"
-
+```
+```
 ArchipatelSketch\Crud\Providers\CrudServiceProvider::class,
 ```
 
