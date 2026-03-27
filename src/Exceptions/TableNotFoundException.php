@@ -1,7 +1,6 @@
 <?php
 
 namespace ArchipatelSketch\Crud\Exceptions;
-
 use Exception;
 
 class TableNotFoundException extends Exception
