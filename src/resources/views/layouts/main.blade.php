@@ -26,15 +26,13 @@
 
 <body>
 
-    @include('layouts.header')
-
     <div class="container">
         @yield('content')
     </div>
 
-
     <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>@include('layouts.footer')
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    @include('crud::layouts.footer')
 
 
 </body>
