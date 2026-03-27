@@ -3,7 +3,6 @@
 namespace ArchipatelSketch\Crud\Providers;
 
 use Illuminate\Support\ServiceProvider;
-// use ArchipatelSketch\Crud\Console\GenerateScheduledReports; // Uncomment if exists
 
 class CrudServiceProvider extends ServiceProvider
 {
@@ -13,46 +12,35 @@ class CrudServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
 
         // Load views
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'crud');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'crud');
 
         // Load migrations
-        $this->loadMigrationsFrom(__DIR__.'/../Database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../Database/migrations');
 
         // Publish config
         $this->publishes([
-            __DIR__.'/../config/form-fields.php' => config_path('form-fields.php'),
+            __DIR__ . '/../Config/form-fields.php' => config_path('form-fields.php'),
         ], 'crud-config');
 
         // Publish views (optional)
         $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/crud'),
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/crud'),
         ], 'crud-views');
 
         // Publish migrations (optional)
         $this->publishes([
-            __DIR__.'/../Database/migrations' => database_path('migrations'),
+            __DIR__ . '/../Database/migrations' => database_path('migrations'),
         ], 'crud-migrations');
 
-        // Register commands
+        // Register console commands
         $this->registerCommands();
-        
-        // Publish config
-    $this->publishes([
-        __DIR__ . '/../Config/form-fields.php' => config_path('form-fields.php'),
-    ], 'crud-config');
-
-    // Merge default config so it's available even if not published
-    $this->mergeConfigFrom(
-        __DIR__ . '/../Config/form-fields.php',
-        'form-fields'
-    );
     }
 
     public function register()
     {
-        // Merge config
+        // Merge default config so package works even if not published
         $this->mergeConfigFrom(
-            __DIR__.'/../config/form-fields.php',
+            __DIR__ . '/../Config/form-fields.php',
             'form-fields'
         );
     }
@@ -64,7 +52,7 @@ class CrudServiceProvider extends ServiceProvider
         }
 
         $this->commands([
-            // GenerateScheduledReports::class,
+            // Add any commands here
         ]);
     }
 }
