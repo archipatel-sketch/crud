@@ -19,7 +19,7 @@ class CrudServiceProvider extends ServiceProvider
 
         // Publish config
         $this->publishes([
-            __DIR__ . '/../Config/form-fields.php' => config_path('form-fields.php'),
+            __DIR__ . '/../config/form-fields.php' => config_path('form-fields.php'),
         ], 'crud-config');
 
         // Publish views (optional)
@@ -40,7 +40,7 @@ class CrudServiceProvider extends ServiceProvider
     {
         // Merge default config so package works even if not published
         $this->mergeConfigFrom(
-            __DIR__ . '/../Config/form-fields.php',
+            __DIR__ . '/../config/form-fields.php',
             'form-fields'
         );
     }
