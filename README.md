@@ -23,12 +23,7 @@ A Laravel package to perform **dynamic CRUD operations** with configurable form 
 ```
 composer require archipatel-sketch/crud:dev-main
 ```
-```
-php artisan vendor:publish --provider="ArchipatelSketch\Crud\Providers\CrudServiceProvider"
-```
-```
-ArchipatelSketch\Crud\Providers\CrudServiceProvider::class,
-```
+
 
 2. **📝 Configuration**
 
@@ -93,6 +88,35 @@ return [
 | `visible`     | Show column in DataTables (`true` / `false`)                                |
 | `upload_type` | For `file` or `image` fields: `'single'` or `'multiple'`                    |
 
+👉 **Publish Config File**
+
+Run the following command to publish the query builder configuration file:
+```
+php artisan vendor:publish --tag=config
+```
+
+👉 **Run Migrations**
+
+Before using the package, run the following command to migrate the required database tables:
+```
+php artisan migrate --path=vendor/archipatel-sketch/crud/src/Database/migrations
+```
+
+👉 **Database Configuration for Query Management**
+
+Set the following variables in your .env file to configure the database used for creating and managing queries:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=
+DB_USERNAME=
+DB_PASSWORD=
+
+```
+```
+php artisan vendor:publish --provider="ArchipatelSketch\Crud\Providers\CrudServiceProvider"
+```
 
 3. **🚀 Usage**
 
@@ -171,4 +195,3 @@ Table names in form-fields.php must exactly match database table names.
 For file/image uploads, ensure storage permissions and proper configuration in config/filesystems.php.
 CrudServiceProvider must be registered (or auto-discovered) for the package to work.
 Make sure package routes are included in your application’s web.php.
-
