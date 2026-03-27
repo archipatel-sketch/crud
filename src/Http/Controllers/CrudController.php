@@ -3,7 +3,7 @@
 namespace ArchipatelSketch\Crud\Http\Controllers;
 
 use Illuminate\Routing\Controller;
-use App\Exceptions\TableNotFoundException;
+use ArchipatelSketch\Crud\Exceptions\TableNotFoundException;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
