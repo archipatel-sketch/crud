@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('crud::layouts.main')
 
 @section('page-title', isset($table) ? 'Create ' . formatTableName($table) : 'Record')
 
