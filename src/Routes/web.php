@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\CrudController;
+use ArchipatelSketch\Crud\Http\Controllers\CrudController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
