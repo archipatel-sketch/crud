@@ -1,6 +1,6 @@
 <?php
 
-use App\Exceptions\TableNotFoundException;
+use ArchipatelSketch\Crud\Exceptions\TableNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 // get form fields
