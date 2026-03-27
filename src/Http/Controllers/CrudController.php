@@ -4,7 +4,7 @@ namespace ArchipatelSketch\Crud\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use ArchipatelSketch\Crud\Exceptions\TableNotFoundException;
-use Exception;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -118,7 +118,7 @@ class CrudController extends Controller
         // validate data server side
         try {
             $validated = $request->validate($rules);
-        } catch (Exception $e) {
+        } catch (ValidationException $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }
 
@@ -257,7 +257,7 @@ class CrudController extends Controller
 
         try {
             $validated = $request->validate($rules);
-        } catch (Exception $e) {
+        } catch (ValidationException $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }
 
