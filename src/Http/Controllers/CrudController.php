@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace ArchipatelSketch\Crud\Http\Controllers;
 
+use Illuminate\Routing\Controller;
 use App\Exceptions\TableNotFoundException;
 use Exception;
 use Illuminate\Http\Request;
@@ -42,10 +43,10 @@ class CrudController extends Controller
                 ->pluck('name')
                 ->toArray();
         } catch (TableNotFoundException $e) {
-            return response()->view('errors.404', ['message' => $e->getMessage()], 404);
+            return response()->view('crud::errors.404', ['message' => $e->getMessage()], 404);
         }
 
-        return view('forms.index', compact('data', 'table', 'visibleColumns', 'images'));
+        return view('crud::forms.index', compact('data', 'table', 'visibleColumns', 'images'));
 
     }
 
@@ -56,9 +57,9 @@ class CrudController extends Controller
             checkTable($table);
             $fields = getFormFields($table);
 
-            return view('forms.create', compact('fields', 'table'));
+            return view('crud::forms.create', compact('fields', 'table'));
         } catch (TableNotFoundException $e) {
-            return response()->view('errors.404', ['message' => $e->getMessage()], 404);
+            return response()->view('crud::errors.404', ['message' => $e->getMessage()], 404);
         }
     }
 
@@ -68,7 +69,7 @@ class CrudController extends Controller
         try {
             checkTable($table);
         } catch (TableNotFoundException $e) {
-            return response()->view('errors.404', ['message' => $e->getMessage()], 404);
+            return response()->view('crud::errors.404', ['message' => $e->getMessage()], 404);
         }
         $fields = getFormFields($table);
         $rules = [];
@@ -188,7 +189,7 @@ class CrudController extends Controller
         try {
             checkTable($table);
         } catch (TableNotFoundException $e) {
-            return response()->view('errors.404', ['message' => $e->getMessage()], 404);
+            return response()->view('crud::errors.404', ['message' => $e->getMessage()], 404);
         }
 
         $fields = getFormFields($table);
@@ -206,7 +207,7 @@ class CrudController extends Controller
                 ->with('error', 'Record not found');
         }
 
-        return view('forms.edit', compact('fields', 'table', 'record', 'images'));
+        return view('crud::forms.edit', compact('fields', 'table', 'record', 'images'));
     }
 
     // update records
