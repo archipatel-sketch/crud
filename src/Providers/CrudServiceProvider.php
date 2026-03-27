@@ -21,7 +21,7 @@ class CrudServiceProvider extends ServiceProvider
         // Publish the package's configuration file to the application's config directory.
         // This allows users to customize package settings without modifying the core package files.
         $this->publishes([
-            __DIR__.'/../Config/form-fields.php' => config_path('form-fields.php'),
+            __DIR__.'/../config/form-fields.php' => config_path('form-fields.php'),
         ], 'form-fields');
 
         // Include a helpers file containing custom utility functions.
