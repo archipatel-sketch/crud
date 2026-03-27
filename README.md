@@ -77,7 +77,7 @@ return [
 
 ];
 ```
-## Field Definition Parameters
+👉 **Field Definition Parameters**
 
 | Parameter     | Description                                                                 |
 | ------------- | --------------------------------------------------------------------------- |
@@ -114,20 +114,36 @@ DB_USERNAME=
 DB_PASSWORD=
 
 ```
+👉 **Set package providers**
 ```
 php artisan vendor:publish --provider="ArchipatelSketch\Crud\Providers\CrudServiceProvider"
 ```
 
-3. **🚀 Usage**
+3. **Routes**
+
+Include the package routes in your routes/web.php:
+
+add prefix if you want
+
+```
+Route::group(['prefix' => 'crud'], function () {
+    include base_path('vendor/archipatel-sketch/crud/src/Routes/web.php');
+});
+```
+
+4. **🚀 Usage**
 
 Create your database tables matching the names defined in form-fields.php.
 
 Access CRUD operations via URL:
-http://your-app.test/crud/{table_name}
+http://your-app.test/{table_name}
 
 ```
+http://127.0.0.1:8000/users
+```
+if you add the prefix in then
+```
 http://127.0.0.1:8000/crud/users
-
 ```
 
 👉 CrudController reads the table name from the URL.
@@ -137,16 +153,6 @@ http://127.0.0.1:8000/crud/users
 👉 Throws TableNotFoundException if table is not defined.
 
 👉 Renders forms for create/edit and displays data using DataTables.
-
-## Example Routes
-
-👉 Include the package routes in your routes/web.php:
-
-```
-Route::group(['prefix' => 'crud'], function () {
-    include base_path('vendor/archipatel-sketch/crud/src/Routes/web.php');
-});
-```
 
 ## 💡 Example Configuration for posts Table
 ```
