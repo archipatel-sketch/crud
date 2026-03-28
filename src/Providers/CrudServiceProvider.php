@@ -24,6 +24,11 @@ class CrudServiceProvider extends ServiceProvider
             __DIR__.'/../config/form-fields.php' => config_path('form-fields.php'),
         ], 'form-fields');
 
+        // configure assets
+        $this->publishes([
+            __DIR__.'/../resources/assets' => public_path('vendor/crud'),
+        ], 'crud-assets');
+
         // Include a helpers file containing custom utility functions.
         require_once __DIR__.'/../Helpers/helpers.php';
 
