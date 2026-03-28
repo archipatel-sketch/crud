@@ -158,12 +158,6 @@ http://127.0.0.1:8000/crud/users
 
 ---
 
-If you made changes on form-fileds file then again config the file in command prompt
-
-```
-php artisan vendor:publish --tag=form-fields --force
-```
-
 ##  Example Configuration for posts Table
 ```
 'posts' => [
