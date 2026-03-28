@@ -64,5 +64,5 @@
 @endsection
 
 @push('footer-scripts')
-    <script src="{{ asset('assets/js/form-validation.js') }}"></script>
+    <script src="{{ asset('vendor/crud/js/form-validation.js') }}"></script>
 @endpush
