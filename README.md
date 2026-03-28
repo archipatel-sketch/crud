@@ -101,6 +101,11 @@ Before using the package, run the following command to migrate the required data
 ```
 php artisan migrate --path=vendor/archipatel-sketch/crud/src/Database/migrations
 ```
+👉 **configure assets**
+
+```
+php artisan vendor:publish --tag=crud-assets
+```
 
 👉 **Database Configuration for Query Management**
 
