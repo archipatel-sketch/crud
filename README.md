@@ -88,6 +88,20 @@ return [
 | `visible`     | Show column in DataTables (`true` / `false`)                                |
 | `upload_type` | For `file` or `image` fields: `'single'` or `'multiple'`                    |
 
+
+👉 **Database Configuration for Query Management**
+
+Set the following variables in your .env file to configure the database used for creating and managing queries:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=
+DB_USERNAME=
+DB_PASSWORD=
+
+```
+
 👉 **Publish Config File**
 
 Run the following command to publish the query builder configuration file:
@@ -107,18 +121,6 @@ php artisan migrate --path=vendor/archipatel-sketch/crud/src/Database/migrations
 php artisan vendor:publish --tag=crud-assets
 ```
 
-👉 **Database Configuration for Query Management**
-
-Set the following variables in your .env file to configure the database used for creating and managing queries:
-```
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=
-DB_USERNAME=
-DB_PASSWORD=
-
-```
 👉 **Set package providers**
 ```
 php artisan vendor:publish --provider="ArchipatelSketch\Crud\Providers\CrudServiceProvider"
