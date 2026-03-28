@@ -25,7 +25,7 @@ composer require archipatel-sketch/crud:dev-main
 ```
 
 
-2. ** Configuration**
+2. **Configuration**
 
 Define your table fields in config/form-fields.php. Each table name should have an array of field definitions.
 
@@ -131,7 +131,7 @@ Route::group(['prefix' => 'crud'], function () {
 });
 ```
 
-4. ** Usage**
+4. **Usage**
 
 Create your database tables matching the names defined in form-fields.php.
 
