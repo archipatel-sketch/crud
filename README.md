@@ -161,6 +161,14 @@ http://127.0.0.1:8000/crud/users
 
 👉 Renders forms for create/edit and displays data using DataTables.
 
+---
+
+If you made changes on form-fileds file then again config the file in command prompt
+
+```
+php artisan vendor:publish --tag=crud-config --force
+```
+
 ##  Example Configuration for posts Table
 ```
 'posts' => [
@@ -182,7 +190,7 @@ http://127.0.0.1:8000/crud/users
         'label' => 'Featured Image',
         'name' => 'featured_image',
         'type' => 'image',
-        'upload_type' => 'single',
+        'upload_type' => 'multiple',
         'rules' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'visible' => true,
     ],
