@@ -5,7 +5,7 @@ A Laravel package to perform **dynamic CRUD operations** with configurable form 
 
 ---
 
-## ✨ Features
+##  Features
 
 - **Dynamic CRUD Operations:** Create, read, update, and delete records dynamically.
 - **Configurable Form Fields:** Define fields, input types, validation rules, and visibility in `config/form-fields.php`.
@@ -16,7 +16,7 @@ A Laravel package to perform **dynamic CRUD operations** with configurable form 
 
 ---
 
-## ⚙ Installation
+##  Installation
 
 1. **Require the package via Composer:**
 
@@ -25,7 +25,7 @@ composer require archipatel-sketch/crud:dev-main
 ```
 
 
-2. **📝 Configuration**
+2. ** Configuration**
 
 Define your table fields in config/form-fields.php. Each table name should have an array of field definitions.
 
@@ -131,7 +131,7 @@ Route::group(['prefix' => 'crud'], function () {
 });
 ```
 
-4. **🚀 Usage**
+4. ** Usage**
 
 Create your database tables matching the names defined in form-fields.php.
 
@@ -154,7 +154,7 @@ http://127.0.0.1:8000/crud/users
 
 👉 Renders forms for create/edit and displays data using DataTables.
 
-## 💡 Example Configuration for posts Table
+##  Example Configuration for posts Table
 ```
 'posts' => [
     [
@@ -189,7 +189,7 @@ http://127.0.0.1:8000/crud/users
 ],
 ```
 
-## 🔗 Example Usage
+##  Example Usage
 👉 Access users CRUD: http://your-app.test/crud/users
 
 👉 Access posts CRUD: http://your-app.test/crud/posts
