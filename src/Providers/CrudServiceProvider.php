@@ -15,6 +15,9 @@ class CrudServiceProvider extends ServiceProvider
         // Load the package routes from the defined web.php file.
         $this->loadRoutesFrom(__DIR__.'/../Routes/web.php');
 
+        // Wrap explicitly for web middleware (session/CSRF Token)
+        Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
+
         // Load views from the package's Resources/views directory and assign a namespace.
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'crud');
 
