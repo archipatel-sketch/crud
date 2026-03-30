@@ -2,14 +2,14 @@
 
 namespace ArchipatelSketch\Crud\Http\Controllers;
 
-use Illuminate\Routing\Controller;
 use ArchipatelSketch\Crud\Exceptions\TableNotFoundException;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class CrudController extends Controller
 {
@@ -24,20 +24,34 @@ class CrudController extends Controller
             $data = DB::table($table)->latest()->get();
             $images = [];
 
-            $image = collect(config('form-fields.'.$table))->where('type', 'file')->pluck('name')->first();
+            $imageConfig = collect(config('form-fields.'.$table))->where('type', 'file')->first();
+            $image_name = $imageConfig['name'] ?? null;
+            $image = $imageConfig;
 
-            if ($image != '' && $image != null) {
-
-                $attachment_ids = DB::table($table)->select('image')->get()->pluck('image')->toArray();
-
-                foreach ($attachment_ids as $index => $attachment_id) {
-                    $image_ids = explode(',', $attachment_id);
-                    $attachments = DB::table('attachments')->whereIn('id', $image_ids)->pluck('file_path', 'id')->toArray();
-                    $images[] = $attachments;
+            $images = [];
+            if ($image_name) {
+                foreach ($data as $index => $row) {
+                    $image_ids = $row->$image_name ? explode(',', $row->$image_name) : [];
+                    $images[$index] = DB::table('attachments')
+                        ->whereIn('id', $image_ids)
+                        ->pluck('file_path', 'id')
+                        ->toArray();
                 }
-
             }
 
+            // for date
+            $date = collect(config('form-fields.'.$table))->where('type', 'date')->first();
+
+            // for select
+            $select = collect(config('form-fields.'.$table))->where('type', 'select')->first();
+
+            // for image
+            $image = collect(config('form-fields.'.$table))->where('type', 'file')->first();
+
+            // for checkbox
+            $checkbox = collect(config('form-fields.'.$table))->where('type', 'checkbox')->first();
+
+            // display visible columns on DataTables
             $visibleColumns = collect(config('form-fields.'.$table))
                 ->where('visible', true)
                 ->pluck('name')
@@ -46,7 +60,7 @@ class CrudController extends Controller
             return response()->view('crud::errors.404', ['message' => $e->getMessage()], 404);
         }
 
-        return view('crud::forms.index', compact('data', 'table', 'visibleColumns', 'images'));
+        return view('crud::forms.index', compact('data', 'table', 'visibleColumns', 'image', 'images', 'date', 'select', 'checkbox'));
 
     }
 
@@ -103,9 +117,17 @@ class CrudController extends Controller
 
                 // Handle file fields
                 if ($field['type'] === 'file') {
-
                     $rules[$field['name']] = 'nullable|array';
                     $rules[$field['name'].'.*'] = 'sometimes|image|mimes:jpg,jpeg,png|max:2048';
+
+                    continue;
+                }
+
+                // handle select fields
+                if ($field['type'] === 'checkbox') {
+                    $rules[$field['name']] = 'nullable|array';
+                    $values = explode('|', $field['values']);
+                    $rules[$field['name'].'.*'] = 'in:'.implode(',', $values);
 
                     continue;
 
@@ -124,6 +146,7 @@ class CrudController extends Controller
 
         foreach ($fields as $field) {
 
+            // move file nd save in db
             if ($field['type'] === 'file' && $request->hasFile($field['name'])) {
 
                 $files = $request->file($field['name']);
@@ -152,9 +175,7 @@ class CrudController extends Controller
                         // }
 
                         $finalName = time().'_'.Str::random(6).'.'.$file->getClientOriginalExtension();
-
                         $file->move($destinationPath, $finalName);
-
                         $attachmentId = DB::table('attachments')->insertGetId([
                             'attachment_name' => $finalName,
                             'file_path' => "assets/images/$table/".$finalName,
@@ -170,8 +191,22 @@ class CrudController extends Controller
                 $validated[$field['name']] = implode(',', $attachmentIds);
 
             }
-        }
 
+            // for checkbox store values as string
+            if ($field['type'] == 'checkbox') {
+                if ($request->has($field['name']) && is_array($request->input($field['name'])) && is_array($validated[$field['name']])) {
+                    // $validated[$field['name']] = implode(',', $validated[$field['name']]);
+                    $validated[$field['name']] = json_encode($request->input($field['name']));
+
+                } else {
+                    $validated[$field['name']] = '';
+                }
+            }
+
+        }
+        // dd($validated);
+
+        // for password
         if (isset($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         }
@@ -251,6 +286,13 @@ class CrudController extends Controller
                     continue;
                 }
 
+                // handle select fields
+                if ($field['type'] === 'checkbox') {
+                    $rules[$field['name']] = 'nullable|array';
+                    $values = explode('|', $field['values']);
+                    $rules[$field['name'].'.*'] = 'in:'.implode(',', $values);
+                }
+
                 $rules[$field['name']] = $rule;
             }
         }
@@ -261,9 +303,9 @@ class CrudController extends Controller
             return back()->withInput()->with('error', $e->getMessage());
         }
 
-        // ---------------- FILE HANDLING ----------------
         foreach ($fields as $field) {
 
+            // --   -------------- FILE HANDLING ----------------
             if ($field['type'] === 'file') {
 
                 // Get old IDs
@@ -337,6 +379,15 @@ class CrudController extends Controller
 
                 $validated[$field['name']] = ! empty($oldIds) ? implode(',', $oldIds) : null;
             }
+
+            // for checkbox store values as string
+            // if ($field['type'] == 'checkbox') {
+            //     if ($request->has($field['name']) && is_array($request->input($field['name'])) && is_array($validated[$field['name']])) {
+            //         $validated[$field['name']] = implode(',', $validated[$field['name']]);
+            //     } else {
+            //         $validated[$field['name']] = '';
+            //     }
+            // }
         }
 
         // ---------------- PASSWORD ----------------
