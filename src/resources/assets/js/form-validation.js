@@ -49,16 +49,19 @@ $(document).ready(function () {
             }
 
             // Unique (remote) validation
-            if (rule.startsWith("unique:")) {
+            // Unique JS remote validation
+            if (rule === "email") {
                 rules[field.name].remote = {
                     url: "/email/verification",
                     type: "get",
                     data: {
                         table: tableName,
                         id: recordId,
+                        email: function () {
+                            return $("#" + field.name).val(); // send current email value
+                        },
                     },
                     dataFilter: function (response) {
-                        // Ensure remote returns "true"/"false"
                         let res = JSON.parse(response);
                         return res === true ? "true" : '"Email already exists"';
                     },
