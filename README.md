@@ -27,7 +27,7 @@ composer require archipatel-sketch/crud:dev-main
 
 2. **Configuration**
 
-Define your table fields in config/form-fields.php. Each table name should have an array of field definitions.
+Define your table fields in config/form-fields.php. Each table name should have an array of field definitions and array name same is table name.
 
 Example form-fields.php for users table:
 ```
