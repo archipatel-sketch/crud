@@ -78,7 +78,7 @@
                                     @endforeach
                                 </td>
                             @else
-                                <td>{{ $row->$col ?? '' }}</td>
+                                <td>{{ ucfirst($row->$col) ?? '' }}</td>
                             @endif
                         @endforeach
 
