@@ -13,7 +13,7 @@ return [
             'label' => 'Email',
             'name' => 'email',
             'type' => 'email',
-            'rules' => 'required|email|unique:',
+            'rules' => 'required|email',
             'visible' => true,
 
         ],
