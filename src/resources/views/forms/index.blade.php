@@ -74,7 +74,7 @@
                             @elseif (isset($checkbox) && $col == $checkbox['name'])
                                 <td>
                                     @foreach (json_decode($row->$col) as $val)
-                                        <span class="badge rounded-pill text-bg-secondary">{{ $val }}</span>
+                                        <span class="badge rounded-pill text-bg-secondary">{{ ucfirst($val) }}</span>
                                     @endforeach
                                 </td>
                             @else
