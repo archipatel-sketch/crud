@@ -115,8 +115,8 @@
                         @php
                             $options = explode('|', $field['values']);
                             $currentValue = old($field['name']);
-                            if (!empty($field['default_checked'])) {
-                                $currentValue = $field['default_checked'];
+                            if (!empty($field['default'])) {
+                                $currentValue = $field['default'];
                             }
                             if (!empty($value)) {
                                 $currentValue = $value;
@@ -141,8 +141,8 @@
                         @php
                             $options = explode('|', $field['values']);
                             $currentValue = [old($field['name'])];
-                            if (!empty($field['default_checked'])) {
-                                $currentValue = [$field['default_checked']];
+                            if (!empty($field['default'])) {
+                                $currentValue = [$field['default']];
                             }
                             if (!empty($value)) {
                                 $currentValue = json_decode($value);
