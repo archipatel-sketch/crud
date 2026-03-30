@@ -145,7 +145,7 @@ php artisan serve
 ```
 http://127.0.0.1:8000/users
 ```
-if you add the prefix in then
+if you add the prefix,
 ```
 http://127.0.0.1:8000/crud/users
 ```
