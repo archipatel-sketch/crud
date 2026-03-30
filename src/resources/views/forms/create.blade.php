@@ -33,7 +33,8 @@
 
                             @if ($field['type'] === 'textarea')
                                 {{-- for text area --}}
-                                <textarea name="{{ $field['name'] }}" class="form-control">{{ old($field['name']) }}</textarea>
+                                <textarea name="{{ $field['name'] }}" class="form-control"
+                                    placeholder="{{ !empty($field['placeholder']) && array_key_exists('placeholder', $field) ? $field['placeholder'] : '' }}">{{ old($field['name']) }}</textarea>
                             @elseif ($field['type'] == 'file')
                                 {{-- for image upload --}}
                                 <input type="{{ $field['type'] }}" name="{{ $field['name'] }}[]" id="{{ $field['name'] }}"
@@ -112,6 +113,7 @@
                                 {{-- for simple inputs like text,password,single file,email --}}
                                 <input type="{{ $field['type'] }}" name="{{ $field['name'] }}" id="{{ $field['name'] }}"
                                     value="{{ old($field['name']) }}" class="form-control"
+                                    placeholder="{{ !empty($field['placeholder']) && array_key_exists('placeholder', $field) ? $field['placeholder'] : '' }}"
                                     autocomplete="{{ $field['type'] === 'password' ? 'new-password' : 'off' }}">
                             @endif
                         </div>
