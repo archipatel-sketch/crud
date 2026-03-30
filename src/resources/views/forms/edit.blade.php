@@ -92,6 +92,75 @@
                                 </div>
                             @endforeach
                         @endisset
+                        {{-- for select --}}
+                    @elseif ($field['type'] == 'select')
+                        @php
+                            $options = explode('|', $field['values']);
+                        @endphp
+                        @if (!empty($field['values']) && isset($options))
+                            <select name="{{ $field['name'] }}" id="{{ $field['name'] }}" class="form-select">
+                                <option value="">--Select city--</option>
+                                @foreach ($options as $option)
+                                    {{ $selected = $option == $value ? 'selected' : '' }}
+                                    <option value="{{ $option }}" {{ $selected }}>
+                                        {{ ucfirst($option) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        @endif
+                        {{-- for radio --}}
+                    @elseif($field['type'] == 'radio')
+                        @php
+                            $options = explode('|', $field['values']);
+                            $currentValue = old($field['name']);
+                            if (!empty($field['default_checked'])) {
+                                $currentValue = $field['default_checked'];
+                            }
+                            if (!empty($value)) {
+                                $currentValue = $value;
+                            }
+                        @endphp
+                        @if (!empty($field['values']) && isset($options))
+                            <div>
+                                @foreach ($options as $option)
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" id="{{ $field['name'] }}_{{ $option }}"
+                                            name="{{ $field['name'] }}" value="{{ $option }}"
+                                            class="form-check-input" {{ $currentValue == $option ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="{{ $field['name'] }}_{{ $option }}">
+                                            {{ ucfirst($option) }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                        {{-- for checkbox --}}
+                    @elseif($field['type'] == 'checkbox')
+                        @php
+                            $options = explode('|', $field['values']);
+                            $currentValue = [old($field['name'])];
+                            if (!empty($field['default_checked'])) {
+                                $currentValue = [$field['default_checked']];
+                            }
+                            if (!empty($value)) {
+                                $currentValue = json_decode($value);
+                            }
+                        @endphp
+                        @if (!empty($field['values']) && isset($options))
+                            <div>
+                                @foreach ($options as $option)
+                                    <div class="form-check form-check-inline">
+                                        <input type="{{ $field['type'] }}" id="{{ $field['name'] }}_{{ $option }}"
+                                            name="{{ $field['name'] }}[]" value="{{ $option }}"
+                                            class="form-check-input"
+                                            {{ in_array($option, $currentValue) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="{{ $field['name'] }}_{{ $option }}">
+                                            {{ ucfirst($option) }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     @else
                         <input type="{{ $field['type'] }}" name="{{ $field['name'] }}" id="{{ $field['name'] }}"
                             value="{{ $value }}" class="form-control" autocomplete="off">
