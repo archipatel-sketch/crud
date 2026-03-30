@@ -55,30 +55,38 @@
 
                         {{-- visible true columns --}}
                         @foreach ($visibleColumns as $col)
-                            @if ($col == 'image' && isset($images))
+                            {{-- for images --}}
+                            @if (isset($images[$index]) && $col == $image['name'])
                                 <td>
-                                    @if (!empty($row->$col))
-                                        @foreach ($images as $id => $image)
-                                            @foreach ($image as $key => $value)
-                                                @if (in_array($key, explode(',', $row->$col)) && !empty($value))
-                                                    <img src="{{ asset($value) }}" alt="image" height="90px"
-                                                        width="90px">
-                                                @endif
-                                            @endforeach
-                                        @endforeach
-                                    @else
-                                        <p>Image not uploaded yet.</p>
-                                    @endif
+                                    @foreach ($images[$index] as $id => $path)
+                                        @if (!empty($path))
+                                            <img src="{{ asset($path) }}" alt="image" height="90px" width="90px">
+                                        @endif
+                                    @endforeach
+                                </td>
+
+                                {{-- for date  --}}
+                            @elseif (isset($date) && $col == $date['name'])
+                                <td>{{ \Carbon\Carbon::parse($row->$col)->format($date['display_formate'] ?? 'Y-m-d') }}
+                                </td>
+
+                                {{-- for checkbox --}}
+                            @elseif (isset($checkbox) && $col == $checkbox['name'])
+                                <td>
+                                    @foreach (json_decode($row->$col) as $val)
+                                        <span class="badge rounded-pill text-bg-secondary">{{ $val }}</span>
+                                    @endforeach
                                 </td>
                             @else
-                                <td>{{ $row->$col }}</td>
+                                <td>{{ $row->$col??"" }}</td>
                             @endif
                         @endforeach
 
                         {{-- Action column --}}
                         <td>
                             <div class="d-flex justify-content-center">
-                                <a href="{{ route('crud.edit', ['table' => $table, 'id' => $row->id]) }}" class="text-dark">
+                                <a href="{{ route('crud.edit', ['table' => $table, 'id' => $row->id]) }}"
+                                    class="text-dark">
                                     <i class="fas fa-edit"></i>
                                 </a>&nbsp;&nbsp;
                                 <p class="delete-record" role="button" data-table="{{ $table }}"
@@ -125,7 +133,7 @@
                 pageLength: 10,
                 responsive: true,
                 autoWidth: false,
-                lengthMenu: [ 5, 10],
+                lengthMenu: [5, 10],
 
             });
 
