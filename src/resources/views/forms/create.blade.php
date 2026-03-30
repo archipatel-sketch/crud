@@ -34,12 +34,80 @@
                             @if ($field['type'] === 'textarea')
                                 {{-- for text area --}}
                                 <textarea name="{{ $field['name'] }}" class="form-control">{{ old($field['name']) }}</textarea>
-                            @elseif ($field['name'] == 'image')
+                            @elseif ($field['type'] == 'file')
                                 {{-- for image upload --}}
                                 <input type="{{ $field['type'] }}" name="{{ $field['name'] }}[]" id="{{ $field['name'] }}"
                                     value="{{ old($field['name']) }}" class="form-control"
                                     {{ isset($field['upload_type']) && $field['upload_type'] == 'multiple' ? 'multiple' : '' }}
                                     accept="image/*">
+                                {{-- for select --}}
+                            @elseif ($field['type'] == 'select')
+                                @php
+                                    $options = explode('|', $field['values']);
+                                    $currentValue = old($field['name'], $field['default_selected'] ?? '');
+                                @endphp
+                                @if (!empty($field['values']) && isset($options))
+                                    <select name="{{ $field['name'] }}" id="{{ $field['name'] }}" class="form-select">
+                                        <option value="">--Select city--</option>
+                                        @foreach ($options as $option)
+                                            <option value="{{ $option }}"
+                                                {{ $currentValue == $option ? 'selected' : '' }}>
+                                                {{ ucfirst($option) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            @elseif($field['type'] == 'radio')
+                                @php
+                                    $options = explode('|', $field['values']);
+                                    $currentValue = old($field['name']);
+                                    if (!empty($field['default_checked'])) {
+                                        $currentValue = $field['default_checked'];
+                                    }
+                                @endphp
+                                @if (!empty($field['values']) && isset($options))
+                                    <div>
+                                        @foreach ($options as $option)
+                                            <div class="form-check form-check-inline">
+                                                <input type="{{ $field['type'] }}"
+                                                    id="{{ $field['name'] }}_{{ $option }}"
+                                                    name="{{ $field['name'] }}" value="{{ $option }}"
+                                                    class="form-check-input"
+                                                    {{ $currentValue == $option ? 'checked' : '' }}>
+                                                <label class="form-check-label"
+                                                    for="{{ $field['name'] }}_{{ $option }}">
+                                                    {{ ucfirst($option) }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                                {{-- for checkbox --}}
+                            @elseif($field['type'] == 'checkbox')
+                                @php
+                                    $options = explode('|', $field['values']);
+                                    $currentValue = old($field['name']);
+                                    if (!empty($field['default_checked'])) {
+                                        $currentValue = $field['default_checked'];
+                                    }
+                                @endphp
+                                @if (!empty($field['values']) && isset($options))
+                                    <div>
+                                        @foreach ($options as $option)
+                                            <div class="form-check form-check-inline">
+                                                <input type="{{ $field['type'] }}"
+                                                    id="{{ $field['name'] }}_{{ $option }}"
+                                                    name="{{ $field['name'] }}[]" value="{{ $option }}"
+                                                    class="form-check-input"
+                                                    {{ $currentValue == $option ? 'checked' : '' }}>
+                                                <label class="form-check-label"
+                                                    for="{{ $field['name'] }}_{{ $option }}">
+                                                    {{ ucfirst($option) }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
                             @else
                                 {{-- for simple inputs like text,password,single file,email --}}
                                 <input type="{{ $field['type'] }}" name="{{ $field['name'] }}" id="{{ $field['name'] }}"
