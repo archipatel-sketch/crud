@@ -72,12 +72,14 @@
                         <textarea name="{{ $field['name'] }}" class="form-control">{{ $value }}</textarea>
                     @elseif($field['type'] === 'password')
                         <input type="password" name="{{ $field['name'] }}" id="{{ $field['name'] }}" value=""
+                            placeholder="{{ !empty($field['placeholder']) && array_key_exists('placeholder', $field) ? $field['placeholder'] : '' }}"
                             class="form-control" autocomplete="new-password">
                         <small class="text-muted">Leave blank if you don't want to change password</small>
                     @elseif ($field['name'] == 'image')
                         {{-- for image upload --}}
                         <input type="{{ $field['type'] }}" name="{{ $field['name'] }}[]" id="{{ $field['name'] }}"
                             class="form-control"
+                            placeholder="{{ !empty($field['placeholder']) && array_key_exists('placeholder', $field) ? $field['placeholder'] : '' }}"
                             {{ isset($field['upload_type']) && $field['upload_type'] == 'multiple' ? 'multiple' : '' }}
                             accept="image/*">
 
@@ -163,6 +165,7 @@
                         @endif
                     @else
                         <input type="{{ $field['type'] }}" name="{{ $field['name'] }}" id="{{ $field['name'] }}"
+                            placeholder="{{ !empty($field['placeholder']) && array_key_exists('placeholder', $field) ? $field['placeholder'] : '' }}"
                             value="{{ $value }}" class="form-control" autocomplete="off">
                     @endif
                 </div>
