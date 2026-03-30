@@ -12,7 +12,7 @@ A Laravel package to perform **dynamic CRUD operations** with configurable form 
 - **Dynamic Table Fetching:** Handles multiple tables dynamically via URL.
 - **Graceful Error Handling:** Throws a `TableNotFoundException` for non-existent tables.
 - **DataTables Integration:** Displays data in responsive DataTables with configurable visibility.
-- **Supports Input Types:** `text`, `password`, `email`, `image`, `textarea`, `date`, `number`.
+- **Supports Input Types:** `text`, `password`, `email`, `image`, `textarea`, `date`, `number`, `select', `radio`, `checkbox`.
 
 ---
 
