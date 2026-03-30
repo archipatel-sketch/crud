@@ -1,4 +1,4 @@
-@extends('crud::layouts.main')
+@extends('layouts.main')
 
 @section('page-title', isset($table) ? 'List ' . formatTableName($table) : 'Records')
 
@@ -78,7 +78,7 @@
                                     @endforeach
                                 </td>
                             @else
-                                <td>{{ $row->$col??"" }}</td>
+                                <td>{{ $row->$col ?? '' }}</td>
                             @endif
                         @endforeach
 
@@ -134,7 +134,17 @@
                 responsive: true,
                 autoWidth: false,
                 lengthMenu: [5, 10],
+                columnDefs: [{
 
+                        orderable: true,
+                        targets: 0
+                    },
+                    {
+                        orderable: false,
+                        targets: '_all'
+
+                    },
+                ],
             });
 
             // Add serial numbers dynamically
