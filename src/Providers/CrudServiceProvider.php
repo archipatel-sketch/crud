@@ -3,6 +3,7 @@
 namespace ArchipatelSketch\Crud\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Service provider for the QueryBuilder package.
