@@ -139,7 +139,9 @@ Create your database tables matching the names defined in form-fields.php.
 
 Access CRUD operations via URL:
 http://your-app.test/{table_name}
-
+```
+php artisan serve
+```
 ```
 http://127.0.0.1:8000/users
 ```
