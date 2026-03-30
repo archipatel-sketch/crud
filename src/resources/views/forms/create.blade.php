@@ -45,7 +45,7 @@
                             @elseif ($field['type'] == 'select')
                                 @php
                                     $options = explode('|', $field['values']);
-                                    $currentValue = old($field['name'], $field['default_selected'] ?? '');
+                                    $currentValue = old($field['name'], $field['default'] ?? '');
                                 @endphp
                                 @if (!empty($field['values']) && isset($options))
                                     <select name="{{ $field['name'] }}" id="{{ $field['name'] }}" class="form-select">
@@ -62,8 +62,8 @@
                                 @php
                                     $options = explode('|', $field['values']);
                                     $currentValue = old($field['name']);
-                                    if (!empty($field['default_checked'])) {
-                                        $currentValue = $field['default_checked'];
+                                    if (!empty($field['default'])) {
+                                        $currentValue = $field['default'];
                                     }
                                 @endphp
                                 @if (!empty($field['values']) && isset($options))
@@ -88,8 +88,8 @@
                                 @php
                                     $options = explode('|', $field['values']);
                                     $currentValue = old($field['name']);
-                                    if (!empty($field['default_checked'])) {
-                                        $currentValue = $field['default_checked'];
+                                    if (!empty($field['default'])) {
+                                        $currentValue = $field['default'];
                                     }
                                 @endphp
                                 @if (!empty($field['values']) && isset($options))
@@ -136,3 +136,4 @@
 @push('footer-scripts')
     <script src="{{ asset('vendor/crud/js/form-validation.js') }}"></script>
 @endpush
+
