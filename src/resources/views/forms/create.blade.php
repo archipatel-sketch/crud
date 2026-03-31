@@ -35,12 +35,20 @@
                                 {{-- for text area --}}
                                 <textarea name="{{ $field['name'] }}" class="form-control"
                                     placeholder="{{ !empty($field['placeholder']) && array_key_exists('placeholder', $field) ? $field['placeholder'] : '' }}">{{ old($field['name']) }}</textarea>
+                                {{-- After every input field --}}
+                                @error($field['name'])
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             @elseif ($field['type'] == 'file')
                                 {{-- for image upload --}}
-                                <input type="{{ $field['type'] }}" name="{{ $field['name'] }}[]" id="{{ $field['name'] }}"
-                                    value="{{ old($field['name']) }}" class="form-control"
+                                <input type="{{ $field['type'] }}" name="{{ $field['name'] }}[]"
+                                    id="{{ $field['name'] }}" value="{{ old($field['name']) }}" class="form-control"
                                     {{ isset($field['upload_type']) && $field['upload_type'] == 'multiple' ? 'multiple' : '' }}
                                     accept="image/*">
+                                {{-- After every input field --}}
+                                @error($field['name'])
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 {{-- for select --}}
                             @elseif ($field['type'] == 'select')
                                 @php
@@ -56,6 +64,10 @@
                                                 {{ ucfirst($option) }}
                                             </option>
                                         @endforeach
+                                        {{-- After every input field --}}
+                                        @error($field['name'])
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </select>
                                 @endif
                             @elseif($field['type'] == 'radio')
@@ -81,6 +93,10 @@
                                                 </label>
                                             </div>
                                         @endforeach
+                                        {{-- After every input field --}}
+                                        @error($field['name'])
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 @endif
                                 {{-- for checkbox --}}
@@ -107,14 +123,58 @@
                                                 </label>
                                             </div>
                                         @endforeach
+                                        {{-- After every input field --}}
+                                        @error($field['name'])
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 @endif
+
+                                {{-- for toggle --}}
+                            @elseif($field['type'] === 'toggle')
+                                @php
+                                    $value = old($field['name'], $record->{$field['name']} ?? ($field['default'] ?? 0));
+                                @endphp
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="{{ $field['name'] }}"
+                                        id="{{ $field['name'] }}" value="1" {{ $value ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="{{ $field['name'] }}">
+                                        {{ $field['label'] }}
+                                    </label>
+                                </div>
+                                {{-- After every input field --}}
+                                @error($field['name'])
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                {{-- for range --}}
+                            @elseif($field['type'] === 'range')
+                                @php
+                                    $value = old($field['name'], $record->{$field['name']} ?? ($field['default'] ?? 0));
+                                @endphp
+
+                                <input type="range" name="{{ $field['name'] }}" id="{{ $field['name'] }}"
+                                    class="form-range" min="{{ $field['min'] ?? 0 }}" max="{{ $field['max'] ?? 100 }}"
+                                    step="{{ $field['step'] ?? 1 }}" value="{{ $value }}"
+                                    oninput="document.getElementById('{{ $field['name'] }}_value').innerText = this.value">
+
+                                <div>
+                                    Value: <span id="{{ $field['name'] }}_value">{{ $value }}</span>
+                                </div>
+                                {{-- After every input field --}}
+                                @error($field['name'])
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             @else
                                 {{-- for simple inputs like text,password,single file,email --}}
                                 <input type="{{ $field['type'] }}" name="{{ $field['name'] }}" id="{{ $field['name'] }}"
                                     value="{{ old($field['name']) }}" class="form-control"
                                     placeholder="{{ !empty($field['placeholder']) && array_key_exists('placeholder', $field) ? $field['placeholder'] : '' }}"
                                     autocomplete="{{ $field['type'] === 'password' ? 'new-password' : 'off' }}">
+                                {{-- After every input field --}}
+                                @error($field['name'])
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             @endif
                         </div>
                     @endforeach
@@ -136,4 +196,3 @@
 @push('footer-scripts')
     <script src="{{ asset('vendor/crud/js/form-validation.js') }}"></script>
 @endpush
-
