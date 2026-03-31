@@ -61,7 +61,10 @@
                 <div class="row g-3">
 
                     @foreach ($fields as $field)
-                        <div class="col-md-6"> {{-- Each field takes half width --}}
+                        @php
+                            $colClass = ($field['input_style'] ?? 'half') === 'full' ? 'col-12' : 'col-md-6';
+                        @endphp
+                        <div class="{{ $colClass }}">
                             <div class="mb-3">
                                 <div class="mb-3">
                                     <label>{{ $field['label'] }}</label>
