@@ -51,6 +51,12 @@ class CrudController extends Controller
             // for checkbox
             $checkbox = collect(config('form-fields.'.$table))->where('type', 'checkbox')->first();
 
+            // for toggle
+            $toggle = collect(config('form-fields.'.$table))->where('type', 'toggle')->first();
+
+            // for range
+            $range = collect(config('form-fields.'.$table))->where('type', 'range')->first();
+
             // display visible columns on DataTables
             $visibleColumns = collect(config('form-fields.'.$table))
                 ->where('visible', true)
@@ -60,7 +66,7 @@ class CrudController extends Controller
             return response()->view('crud::errors.404', ['message' => $e->getMessage()], 404);
         }
 
-        return view('crud::forms.index', compact('data', 'table', 'visibleColumns', 'image', 'images', 'date', 'select', 'checkbox'));
+        return view('crud::forms.index', compact('data', 'table', 'visibleColumns', 'image', 'images', 'date', 'select', 'checkbox', 'toggle', 'range'));
 
     }
 
@@ -123,7 +129,7 @@ class CrudController extends Controller
                     continue;
                 }
 
-                // handle select fields
+                // handle checkbox fields
                 if ($field['type'] === 'checkbox') {
                     $rules[$field['name']] = 'nullable|array';
                     $values = explode('|', $field['values']);
@@ -141,7 +147,8 @@ class CrudController extends Controller
         try {
             $validated = $request->validate($rules);
         } catch (ValidationException $e) {
-            return back()->withInput()->with('error', $e->getMessage());
+            // return back()->withInput()->with('error', $e->getMessage());
+            return back()->withInput()->withErrors($e->errors());
         }
 
         foreach ($fields as $field) {
@@ -201,6 +208,11 @@ class CrudController extends Controller
                 } else {
                     $validated[$field['name']] = '';
                 }
+            }
+
+            // for toggle button
+            if ($field['type'] === 'toggle') {
+                $validated[$field['name']] = $request->has($field['name']) ? 1 : 0;
             }
 
         }
@@ -291,6 +303,8 @@ class CrudController extends Controller
                     $rules[$field['name']] = 'nullable|array';
                     $values = explode('|', $field['values']);
                     $rules[$field['name'].'.*'] = 'in:'.implode(',', $values);
+
+                    continue;
                 }
 
                 $rules[$field['name']] = $rule;
@@ -300,7 +314,7 @@ class CrudController extends Controller
         try {
             $validated = $request->validate($rules);
         } catch (ValidationException $e) {
-            return back()->withInput()->with('error', $e->getMessage());
+            return back()->withInput()->withErrors($e->errors());
         }
 
         foreach ($fields as $field) {
@@ -381,13 +395,21 @@ class CrudController extends Controller
             }
 
             // for checkbox store values as string
-            // if ($field['type'] == 'checkbox') {
-            //     if ($request->has($field['name']) && is_array($request->input($field['name'])) && is_array($validated[$field['name']])) {
-            //         $validated[$field['name']] = implode(',', $validated[$field['name']]);
-            //     } else {
-            //         $validated[$field['name']] = '';
-            //     }
-            // }
+            if ($field['type'] == 'checkbox') {
+                if ($request->has($field['name']) && is_array($request->input($field['name'])) && is_array($validated[$field['name']])) {
+                    // $validated[$field['name']] = implode(',', $validated[$field['name']]);
+                    $validated[$field['name']] = json_encode($request->input($field['name']));
+
+                } else {
+                    $validated[$field['name']] = '';
+                }
+            }
+
+            // for toggle button
+            if ($field['type'] === 'toggle') {
+                $validated[$field['name']] = $request->has($field['name']) ? 1 : 0;
+            }
+
         }
 
         // ---------------- PASSWORD ----------------
