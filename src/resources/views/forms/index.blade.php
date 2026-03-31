@@ -73,12 +73,29 @@
                                 {{-- for checkbox --}}
                             @elseif (isset($checkbox) && $col == $checkbox['name'])
                                 <td>
-                                    @foreach (json_decode($row->$col) as $val)
-                                        <span class="badge rounded-pill text-bg-secondary">{{ ucfirst($val) }}</span>
+                                    @php
+                                        $rawValue = old($col, $row->$col ?? null);
+
+                                        $values = is_string($rawValue) ? json_decode($rawValue, true) : $rawValue;
+                                    @endphp
+
+                                    @foreach ($values ?? [] as $val)
+                                        <span class="badge text-bg-secondary">{{ ucfirst($val) }}</span>
                                     @endforeach
                                 </td>
+                                
+                                {{-- for toggle --}}
+                            @elseif (isset($toggle) && $col == $toggle['name'])
+                                <td>
+                                    <span class="badge {{ $row->$col ? 'bg-success' : 'bg-danger' }}">
+                                        {{ $row->$col ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                {{-- for range --}}
+                            @elseif (isset($range) && $col == $range['name'])
+                                <td>{{ $row->$col }}</td>
                             @else
-                                <td>{{ ucfirst($row->$col) ?? '' }}</td>
+                                <td>{{ !empty($row->$col) ? ucfirst($row->$col) : '' }}</td>
                             @endif
                         @endforeach
 
