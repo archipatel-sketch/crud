@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('age')->nullable();
             $table->string('language')->nullable();
             $table->string('city')->nullable();
+            $table->string('favorite_color')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status')->default(1);
             $table->string('join_date')->nullable();
