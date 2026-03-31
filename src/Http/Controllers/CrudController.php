@@ -57,6 +57,9 @@ class CrudController extends Controller
             // for range
             $range = collect(config('form-fields.'.$table))->where('type', 'range')->first();
 
+            // for color picker
+            $color = collect(config('form-fields.'.$table))->where('type', 'color')->first();
+
             // display visible columns on DataTables
             $visibleColumns = collect(config('form-fields.'.$table))
                 ->where('visible', true)
@@ -66,7 +69,7 @@ class CrudController extends Controller
             return response()->view('crud::errors.404', ['message' => $e->getMessage()], 404);
         }
 
-        return view('crud::forms.index', compact('data', 'table', 'visibleColumns', 'image', 'images', 'date', 'select', 'checkbox', 'toggle', 'range'));
+        return view('crud::forms.index', compact('data', 'table', 'visibleColumns', 'image', 'images', 'date', 'select', 'checkbox', 'toggle', 'range','color'));
 
     }
 
@@ -143,6 +146,7 @@ class CrudController extends Controller
             }
         }
 
+
         // validate data server side
         try {
             $validated = $request->validate($rules);
@@ -216,7 +220,6 @@ class CrudController extends Controller
             }
 
         }
-        // dd($validated);
 
         // for password
         if (isset($validated['password'])) {
@@ -260,6 +263,7 @@ class CrudController extends Controller
     // update records
     public function update(Request $request, $table, $id)
     {
+
         checkTable($table);
 
         $fields = getFormFields($table);
@@ -294,7 +298,6 @@ class CrudController extends Controller
                         $rules[$field['name']] = 'array';
                         $rules[$field['name'].'.*'] = 'image|mimes:jpg,jpeg,png|max:2048';
                     }
-
                     continue;
                 }
 
@@ -303,7 +306,6 @@ class CrudController extends Controller
                     $rules[$field['name']] = 'nullable|array';
                     $values = explode('|', $field['values']);
                     $rules[$field['name'].'.*'] = 'in:'.implode(',', $values);
-
                     continue;
                 }
 
