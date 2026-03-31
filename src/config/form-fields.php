@@ -23,10 +23,9 @@ return [
             'label' => 'Mobile No.',
             'name' => 'mobile_no',
             'type' => 'number',
-            'rules' => 'required|regex:/^[0-9]{10}$/',
+            'rules' => 'required|numeric|regex:/^[0-9]{10,11}$/',
             'placeholder' => 'Enter Mobile No',
             'visible' => true,
-
         ],
         [
             'label' => 'Image',
@@ -54,6 +53,26 @@ return [
             'default' => 'english',
             'visible' => true,
             'rules' => 'nullable|array',
+            'language.*' => 'in:gujarati,english,hindi',
+        ],
+        [
+            'label' => 'Status',
+            'name' => 'status',
+            'type' => 'toggle',
+            'default' => 1,
+            'visible' => true,
+            'rules' => 'nullable|boolean',
+        ],
+        [
+            'label' => 'Age',
+            'name' => 'age',
+            'type' => 'range',
+            'min' => 0,
+            'max' => 100,
+            'step' => 1,
+            'default' => 25,
+            'visible' => true,
+            'rules' => 'nullable|integer|min:0|max:100',
         ],
         [
             'label' => 'City',
