@@ -17,10 +17,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('mobile_no')->nullable();
             $table->string('gender')->nullable();
+            $table->string('age')->nullable();
             $table->string('language')->nullable();
-            $table->string('image')->nullable();
             $table->string('city')->nullable();
-            $table->string('join_date')->nullable();
+            $table->string('image')->nullable();
+            $table->boolean('status')->default(1);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
