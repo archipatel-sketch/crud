@@ -20,6 +20,13 @@ class CrudController extends Controller
         try {
             checkTable($table);
 
+            $fields = getFormFields($table);
+            if (empty($fields) && $fields == [] && $fields == null) {
+                return response()->view('crud::errors.404', [
+                    'message' => "Form fields not configured for '{$table}'.",
+                ], 404);
+            }
+
             // for image column
             $data = DB::table($table)->latest()->get();
             $images = [];
@@ -69,7 +76,7 @@ class CrudController extends Controller
             return response()->view('crud::errors.404', ['message' => $e->getMessage()], 404);
         }
 
-        return view('crud::forms.index', compact('data', 'table', 'visibleColumns', 'image', 'images', 'date', 'select', 'checkbox', 'toggle', 'range','color'));
+        return view('crud::forms.index', compact('data', 'table', 'visibleColumns', 'image', 'images', 'date', 'select', 'checkbox', 'toggle', 'range', 'color'));
 
     }
 
@@ -79,6 +86,11 @@ class CrudController extends Controller
         try {
             checkTable($table);
             $fields = getFormFields($table);
+            if (empty($fields) && $fields == [] && $fields == null) {
+                return response()->view('crud::errors.404', [
+                    'message' => "Form fields not configured for '{$table}'.",
+                ], 404);
+            }
 
             return view('crud::forms.create', compact('fields', 'table'));
         } catch (TableNotFoundException $e) {
@@ -95,6 +107,11 @@ class CrudController extends Controller
             return response()->view('crud::errors.404', ['message' => $e->getMessage()], 404);
         }
         $fields = getFormFields($table);
+        if (empty($fields) && $fields == [] && $fields == null) {
+            return response()->view('crud::errors.404', [
+                'message' => "Form fields not configured for '{$table}'.",
+            ], 404);
+        }
         $rules = [];
         $columnsToCheck = array_map(fn ($field) => $field['name'], $fields);
         $tableColumns = Schema::getColumnListing($table);
@@ -145,7 +162,6 @@ class CrudController extends Controller
                 $rules[$field['name']] = $rule;
             }
         }
-
 
         // validate data server side
         try {
@@ -243,6 +259,11 @@ class CrudController extends Controller
         }
 
         $fields = getFormFields($table);
+        if (empty($fields) && $fields == [] && $fields == null) {
+            return response()->view('crud::errors.404', [
+                'message' => "Form fields not configured for '{$table}'.",
+            ], 404);
+        }
         $record = DB::table($table)->where('id', $id)->first();
         $images = [];
 
@@ -267,6 +288,11 @@ class CrudController extends Controller
         checkTable($table);
 
         $fields = getFormFields($table);
+        if (empty($fields) && $fields == [] && $fields == null) {
+            return response()->view('crud::errors.404', [
+                'message' => "Form fields not configured for '{$table}'.",
+            ], 404);
+        }
 
         // Get existing record
         $record = DB::table($table)->where('id', $id)->first();
@@ -298,6 +324,7 @@ class CrudController extends Controller
                         $rules[$field['name']] = 'array';
                         $rules[$field['name'].'.*'] = 'image|mimes:jpg,jpeg,png|max:2048';
                     }
+
                     continue;
                 }
 
@@ -306,6 +333,7 @@ class CrudController extends Controller
                     $rules[$field['name']] = 'nullable|array';
                     $values = explode('|', $field['values']);
                     $rules[$field['name'].'.*'] = 'in:'.implode(',', $values);
+
                     continue;
                 }
 
@@ -489,6 +517,11 @@ class CrudController extends Controller
         }
 
         $fields = getFormFields($table);
+        if (empty($fields) && $fields == [] && $fields == null) {
+            return response()->view('crud::errors.404', [
+                'message' => "Form fields not configured for '{$table}'.",
+            ], 404);
+        }
         $hasEmailField = collect($fields)->contains('name', 'email');
 
         if (! $hasEmailField) {
