@@ -8,6 +8,7 @@ return [
             'type' => 'text',
             'rules' => 'required|string|max:255',
             'placeholder' => 'Enter Name',
+            'input_style'=>'full',
             'visible' => true,
         ],
         [
@@ -16,6 +17,7 @@ return [
             'type' => 'email',
             'rules' => 'required|email',
             'placeholder' => 'Enter Email',
+            'input_style'=>'full',
             'visible' => true,
 
         ],
