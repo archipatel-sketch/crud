@@ -83,7 +83,7 @@
                                         <span class="badge text-bg-secondary">{{ ucfirst($val) }}</span>
                                     @endforeach
                                 </td>
-                                
+
                                 {{-- for toggle --}}
                             @elseif (isset($toggle) && $col == $toggle['name'])
                                 <td>
@@ -94,6 +94,17 @@
                                 {{-- for range --}}
                             @elseif (isset($range) && $col == $range['name'])
                                 <td>{{ $row->$col }}</td>
+                                {{-- for color picker --}}
+                            @elseif (isset($color) && $col == $color['name'])
+                                @if (isset($color['display_formate']) && $color['display_formate']=='color')
+                                    <td>
+                                        <div
+                                            style="width: 30px; height: 30px; background-color: {{ $row->$col }}; border: 1px solid #ccc; border-radius: 4px;">
+                                        </div>
+                                    </td>
+                                @else
+                                <td>{{ $row->$col }}</td>
+                                @endif
                             @else
                                 <td>{{ !empty($row->$col) ? ucfirst($row->$col) : '' }}</td>
                             @endif
