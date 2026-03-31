@@ -23,6 +23,9 @@
             @endif
 
             @if (isset($fields) && isset($table))
+
+
+
                 <form id="form-validation" method="POST" action="{{ route('crud.store', ['table' => $table]) }}"
                     data-table="{{ $table }}" enctype="multipart/form-data">
                     @csrf
@@ -30,7 +33,10 @@
                     <div class="row g-3"> {{-- Bootstrap row with gutters --}}
 
                         @foreach ($fields as $field)
-                            <div class="col-md-6"> {{-- Each field takes half width --}}
+                            @php
+                                $colClass = ($field['input_style'] ?? 'half') === 'full' ? 'col-12' : 'col-md-6';
+                            @endphp
+                            <div class="{{ $colClass }}">
                                 <div class="mb-3">
                                     <label>{{ $field['label'] }}</label>
 
@@ -150,7 +156,8 @@
                                             max="{{ $field['max'] ?? 100 }}" step="{{ $field['step'] ?? 1 }}"
                                             value="{{ $value }}"
                                             oninput="document.getElementById('{{ $field['name'] }}_value').innerText = this.value">
-                                        <div>Value: <span id="{{ $field['name'] }}_value">{{ $value }}</span></div>
+                                        <div>Value: <span id="{{ $field['name'] }}_value">{{ $value }}</span>
+                                        </div>
                                         @error($field['name'])
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
@@ -165,8 +172,8 @@
                                         @enderror
                                     @endif
 
-                                </div> {{-- mb-3 --}}
-                            </div> {{-- col-md-6 --}}
+                                </div>
+                            </div>{{-- mb-3 --}}
                         @endforeach
 
                     </div> {{-- row --}}
