@@ -9,7 +9,7 @@
             <h1>All {{ isset($table) ? ucfirst($table) : 'Records' }}</h1>
         </div>
 
-        <div class="mb-4 d-flex justify-content-end">
+        <div class="mt-4 mb-4 d-flex justify-content-end">
             <a href="{{ route('crud.create', $table) }}" class="btn btn-dark">
                 <i class="fas fa-plus-square me-2"></i> Add {{ isset($table) ? formatTableName($table) : 'Record' }}
 
