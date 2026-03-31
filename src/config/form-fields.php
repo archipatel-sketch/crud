@@ -70,7 +70,7 @@ return [
             'rules' => 'nullable|string',
             'visible' => true,
             'placeholder' => '#FFFFFF',
-            'display_formate' => 'code', // or 'code'
+            'display_formate' => 'color', // or 'code'
         ],
         [
             'label' => 'Age',
