@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->string('mobile_no')->nullable();
             $table->string('gender')->nullable();
             $table->string('age')->nullable();
@@ -22,10 +22,10 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('favorite_color')->nullable();
             $table->string('image')->nullable();
-            $table->boolean('status')->default(1);
+            $table->boolean('status')->default(1)->nullable();
             $table->string('join_date')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
