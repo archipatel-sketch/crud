@@ -23,7 +23,7 @@ return [
             'label' => 'Mobile No.',
             'name' => 'mobile_no',
             'type' => 'number',
-            'rules' => 'required|numeric|regex:/^[6-9]\d{9,10}$/',
+            'rules' => 'required|numeric|regex:/^[0-9]{10,11}$/',
             'placeholder' => 'Enter Mobile No',
             'visible' => true,
         ],
@@ -62,6 +62,15 @@ return [
             'default' => 1,
             'visible' => true,
             'rules' => 'nullable|boolean',
+        ],
+        [
+            'label' => 'Favorite Color',
+            'name' => 'favorite_color',
+            'type' => 'color',
+            'rules' => 'nullable|string',
+            'visible' => true,
+            'placeholder' => '#FFFFFF',
+            'display_formate' => 'code', // or 'code'
         ],
         [
             'label' => 'Age',
