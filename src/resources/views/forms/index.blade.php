@@ -114,10 +114,10 @@
                             <td>
                                 <div class="d-flex justify-content-center">
                                     <a href="{{ route('crud.edit', ['table' => $table, 'id' => $row->id]) }}"
-                                        class="text-dark">
+                                        class="text-dark p-2">
                                         <i class="fas fa-edit"></i>
                                     </a>&nbsp;&nbsp;
-                                    <p class="delete-record" role="button" data-table="{{ $table }}"
+                                    <p class="delete-record p-2" role="button" data-table="{{ $table }}"
                                         data-id="{{ $row->id }}">
                                         <i class="fas fa-trash"></i>
                                     </p>
