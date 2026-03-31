@@ -23,7 +23,7 @@ return [
             'label' => 'Mobile No.',
             'name' => 'mobile_no',
             'type' => 'number',
-            'rules' => 'required|numeric|regex:/^[0-9]{10,11}$/',
+            'rules' => 'required|numeric|regex:/^[6-9]\d{9,10}$/',
             'placeholder' => 'Enter Mobile No',
             'visible' => true,
         ],
