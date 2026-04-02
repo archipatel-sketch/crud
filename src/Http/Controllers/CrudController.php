@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Exception;
 
 class CrudController extends Controller
 {
@@ -72,7 +73,7 @@ class CrudController extends Controller
                             try {
                                 checkTable($relation_table);
                                 $relation_data[$relation_table] = DB::table($relation_table)->select($label, $value)->get()->pluck($label, $value)->toArray();
-                            } catch (ValidationException $e) {
+                            } catch (Exception $e) {
                                 return response()->view('crud::errors.404', ['message' => "relation table not found which is you define for '{$array_data['label']}'"], 404);
                             }
                         }
@@ -134,7 +135,7 @@ class CrudController extends Controller
                     try {
                         checkTable($relation_table);
                         $relation_array[$field_name] = DB::table($relation_table)->select("{$relation_table}.*")->get()->pluck($label, $values)->toArray();
-                    } catch (ValidationException $e) {
+                    } catch (Exception $e) {
                         return response()->view('crud::errors.404', ['message' => "relation table not found which is you define for '{$value['label']}'"], 404);
                     }
                 }
@@ -173,6 +174,7 @@ class CrudController extends Controller
         }
         // rules
         $rules = $this->createRules($request, $table, $fields);
+
         // validate data server side
         try {
             $validated = $request->validate($rules);
@@ -246,6 +248,7 @@ class CrudController extends Controller
         if (isset($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         }
+
 
         DB::table($table)->insert($validated);
 
@@ -562,6 +565,7 @@ class CrudController extends Controller
                     }, $rule);
                 }
 
+                // Handle file fields
                 if ($field['type'] === 'file') {
 
                     if (isset($field['upload_type']) && $field['upload_type'] == 'multiple') {
@@ -662,7 +666,7 @@ class CrudController extends Controller
                                     continue;
                                 }
 
-                            } catch (Exception $e) {
+                            } catch (ValidationException $e) {
                                 return response()->view('crud::errors.404', ['message' => "relation table not found which is you define for '{$array_data['label']}'"], 404);
                             }
                         } else {
