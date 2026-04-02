@@ -247,8 +247,6 @@ class CrudController extends Controller
             $validated['password'] = Hash::make($validated['password']);
         }
 
-        dd($validated);
-
         DB::table($table)->insert($validated);
 
         return redirect()
