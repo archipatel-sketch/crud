@@ -564,17 +564,16 @@ class CrudController extends Controller
                     }, $rule);
                 }
 
-                // Handle file fields
                 if ($field['type'] === 'file') {
-
-                    //     $rules[$field['name']] = 'nullable|array';
-                    //     $rules[$field['name'].'.*'] = 'sometimes|image|mimes:jpg,jpeg,png|max:2048';
 
                     if (isset($field['upload_type']) && $field['upload_type'] == 'multiple') {
                         if (! str_contains('array', $field['rules'])) {
-                            $rules[$field['name']] = $field['rules'].'|array';
+                            $rules[$field['name']] = 'nullable|array';
+                            $rules[$field['name'].'.*'] = 'sometimes|image|mimes:jpg,jpeg,png|max:2048';
                         }
-
+                    }else{
+                        $rules[$field['name']] = 'nullable';
+                        $rules[$field['name'].'.*'] = 'sometimes|image|mimes:jpg,jpeg,png|max:2048';
                     }
 
                     continue;
