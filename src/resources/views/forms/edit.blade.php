@@ -121,6 +121,7 @@
                                         {{-- Select --}}
                                     @elseif ($field['type'] == 'select')
                                         @php
+
                                             $currentValue = (array) old($field['name'], $field['default']);
                                             if (!empty($value)) {
                                                 $currentValue = (array) $value;
@@ -128,7 +129,8 @@
                                             if (
                                                 isset($field['select_type']) &&
                                                 $field['select_type'] == 'multiple' &&
-                                                !empty($value)
+                                                !empty($value) &&
+                                                !is_array($value)
                                             ) {
                                                 $currentValue = explode(',', $value);
                                             }
@@ -202,7 +204,7 @@
                                         @endif
                                         {{-- for checkbox --}}
                                     @elseif($field['type'] == 'checkbox')
-                                       @php
+                                        @php
                                             $options = explode('|', $field['values']);
 
                                             $currentValue = (array) old($field['name'], $field['default']);
