@@ -29,7 +29,7 @@ class CrudController extends Controller
             }
 
             // for image column
-            $data = DB::table($table)->latest()->get();
+            $data = DB::table($table)->get();
             $images = [];
 
             $imageConfig = collect(config('form-fields.'.$table))->where('type', 'file')->first();
