@@ -109,11 +109,11 @@ Run the following command to publish the query builder configuration file:
 php artisan vendor:publish --tag=config
 ```
 
-👉 **Run Migrations**
+👉 **Run Migrations and seeders**
 
 Before using the package, run the following command to migrate the required database tables:
 ```
-php artisan migrate --path=vendor/archipatel-sketch/crud/src/Database/migrations
+php artisan migrate --path=vendor/archipatel-sketch/crud/src/Database/migrations --seed --seeder=CitySeeder
 ```
 
 👉 **Set package providers**
