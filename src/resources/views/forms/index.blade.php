@@ -40,7 +40,8 @@
                     <tr>
                         <th>#</th>
                         @isset($visibleColumns)
-                            <th>{{ ucfirst(str_replace('_', ' ', $col)) }}</th>
+                            @foreach ($visibleColumns as $col)
+                                <th>{{ ucfirst(str_replace('_', ' ', $col)) }}</th>
                             @endforeach
                         @endisset
                         <th>Actions</th>
