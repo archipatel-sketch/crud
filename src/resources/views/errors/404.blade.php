@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('crud::layouts.main')
 
 @section('page-title', '404 Not Found')
 
