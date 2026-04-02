@@ -202,17 +202,14 @@
                                         @endif
                                         {{-- for checkbox --}}
                                     @elseif($field['type'] == 'checkbox')
-                                        @php
+                                       @php
                                             $options = explode('|', $field['values']);
-                                            $currentValue = (array) old($field['name'], $field['default']);
 
-                                            if (!empty($value && $value != '')) {
-                                                $currentValue = (array) $value;
-                                                if (!is_array($currentValue)) {
-                                                    $currentValue = json_decode($currentValue);
-                                                }
+                                            $currentValue = (array) old($field['name'], $field['default']);
+                                            if (isset($value) && !is_array($value)) {
+                                                $currentValue = json_decode($value);
                                             }
-                                            // print_r($currentValue);
+
                                         @endphp
                                         <div>
                                             @foreach ($options as $option)
