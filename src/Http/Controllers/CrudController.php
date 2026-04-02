@@ -72,7 +72,7 @@ class CrudController extends Controller
                             try {
                                 checkTable($relation_table);
                                 $relation_data[$relation_table] = DB::table($relation_table)->select($label, $value)->get()->pluck($label, $value)->toArray();
-                            } catch (Exception $e) {
+                            } catch (ValidationException $e) {
                                 return response()->view('crud::errors.404', ['message' => "relation table not found which is you define for '{$array_data['label']}'"], 404);
                             }
                         }
@@ -134,7 +134,7 @@ class CrudController extends Controller
                     try {
                         checkTable($relation_table);
                         $relation_array[$field_name] = DB::table($relation_table)->select("{$relation_table}.*")->get()->pluck($label, $values)->toArray();
-                    } catch (Exception $e) {
+                    } catch (ValidationException $e) {
                         return response()->view('crud::errors.404', ['message' => "relation table not found which is you define for '{$value['label']}'"], 404);
                     }
                 }
