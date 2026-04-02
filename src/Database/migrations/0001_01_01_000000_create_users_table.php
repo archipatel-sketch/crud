@@ -20,7 +20,9 @@ return new class extends Migration
             $table->string('age')->nullable();
             $table->string('language')->nullable();
             $table->string('city')->nullable();
+            $table->string('country')->nullable();
             $table->string('favorite_color')->nullable();
+            $table->string('favorite_movie')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status')->default(1)->nullable();
             $table->string('join_date')->nullable();
@@ -36,6 +38,11 @@ return new class extends Migration
             $table->string('file_path')->nullable();
             $table->string('original_name')->nullable();
             $table->timestamps();
+        });
+
+        Schema::create('city', function (Blueprint $table) {
+            $table->id();
+            $table->string('city_name');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

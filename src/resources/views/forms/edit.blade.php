@@ -1,7 +1,6 @@
 @extends('crud::layouts.main')
 
 @section('page-title', isset($table) ? 'Edit ' . formatTableName($table) : 'Record')
-
 @push('header-styles')
     <style>
         .image-container {
@@ -65,30 +64,36 @@
                             $colClass = ($field['input_style'] ?? 'half') === 'full' ? 'col-12' : 'col-md-6';
                         @endphp
                         <div class="{{ $colClass }}">
+
                             <div class="mb-3">
-                                <div class="mb-3">
+                                @if (
+                                    (isset($field['display_on_edit']) && $field['display_on_edit'] != false) ||
+                                        !array_key_exists('display_on_edit', $field))
                                     <label>{{ $field['label'] }}</label>
 
                                     @php
                                         $value = old($field['name'], $record->{$field['name']} ?? '');
                                     @endphp
 
+                                    {{-- for text-area --}}
                                     @if ($field['type'] === 'textarea')
                                         <textarea name="{{ $field['name'] }}" class="form-control">{{ $value }}</textarea>
-                                        {{-- After every input field --}}
+
                                         @error($field['name'])
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
+                                        {{-- for password --}}
                                     @elseif($field['type'] === 'password')
                                         <input type="password" name="{{ $field['name'] }}" id="{{ $field['name'] }}"
                                             value=""
                                             placeholder="{{ !empty($field['placeholder']) && array_key_exists('placeholder', $field) ? $field['placeholder'] : '' }}"
                                             class="form-control" autocomplete="new-password">
                                         <small class="text-muted">Leave blank if you don't want to change password</small>
-                                        {{-- After every input field --}}
+
                                         @error($field['name'])
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
+                                        {{-- for image --}}
                                     @elseif ($field['name'] == 'image')
                                         {{-- for image upload --}}
                                         <input type="{{ $field['type'] }}" name="{{ $field['name'] }}[]"
@@ -108,32 +113,60 @@
                                                     </button>
                                                 </div>
                                             @endforeach
-                                            {{-- After every input field --}}
+
                                             @error($field['name'])
                                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                             @enderror
                                         @endisset
-                                        {{-- for select --}}
+                                        {{-- Select --}}
                                     @elseif ($field['type'] == 'select')
                                         @php
-                                            $options = explode('|', $field['values']);
+                                            $currentValue = (array) old($field['name'], $field['default']);
+                                            if (!empty($value)) {
+                                                $currentValue = (array) $value;
+                                            }
+                                            if (
+                                                isset($field['select_type']) &&
+                                                $field['select_type'] == 'multiple' &&
+                                                !empty($value)
+                                            ) {
+                                                $currentValue = explode(',', $value);
+                                            }
+                                            if (!empty($field['values'])) {
+                                                $options = explode('|', $field['values']);
+                                            }
                                         @endphp
-                                        @if (!empty($field['values']) && isset($options))
-                                            <select name="{{ $field['name'] }}" id="{{ $field['name'] }}"
-                                                class="form-select">
-                                                <option value="">--Select city--</option>
+                                        <select name="{{ $field['name'] }}{{ isset($field['select_type']) ? '[]' : '' }}"
+                                            id="{{ $field['name'] }}" class="form-select"
+                                            {{ isset($field['select_type']) ? $field['select_type'] : '' }}>
+                                            @if (!isset($field['select_type']))
+                                                <option value="">--Select--</option>
+                                            @endif
+                                            @if (isset($relation_array) && array_key_exists($field['name'], $relation_array))
+                                                @if (isset($select_relation))
+                                                    @foreach ($relation_array as $key => $values)
+                                                        @foreach ($values as $key => $value)
+                                                            <option value="{{ $key }}"
+                                                                {{ in_array($value, $currentValue) || in_array($key, $currentValue) ? 'selected' : '' }}>
+                                                                {{ ucfirst($value) }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endforeach
+                                                @endif
+                                            @else
                                                 @foreach ($options as $option)
-                                                    {{ $selected = $option == $value ? 'selected' : '' }}
-                                                    <option value="{{ $option }}" {{ $selected }}>
+                                                    <option value="{{ $option }}"
+                                                        {{ in_array($option, $currentValue) ? 'selected' : '' }}>
                                                         {{ ucfirst($option) }}
                                                     </option>
                                                 @endforeach
-                                            </select>
-                                            {{-- After every input field --}}
-                                            @error($field['name'])
-                                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                                            @enderror
-                                        @endif
+                                            @endif
+                                        </select>
+
+                                        @error($field['name'])
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+
                                         {{-- for radio --}}
                                     @elseif($field['type'] == 'radio')
                                         @php
@@ -162,7 +195,7 @@
                                                     </div>
                                                 @endforeach
                                             </div>
-                                            {{-- After every input field --}}
+
                                             @error($field['name'])
                                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                             @enderror
@@ -171,38 +204,31 @@
                                     @elseif($field['type'] == 'checkbox')
                                         @php
                                             $options = explode('|', $field['values']);
+                                            $currentValue = (array) old($field['name'], $field['default']);
 
-                                            // Get value (old OR DB)
-                                            $rawValue = old($field['name'], $value ?? null);
-
-                                            if (is_array($rawValue)) {
-                                                // When validation fails → old() returns array
-                                                $currentValue = $rawValue;
-                                            } elseif (is_string($rawValue)) {
-                                                // When data comes from DB → JSON string
-                                                $decoded = json_decode($rawValue, true);
-                                                $currentValue = is_array($decoded) ? $decoded : [];
-                                            } else {
-                                                // Default value
-                                                $currentValue = !empty($field['default']) ? [$field['default']] : [];
+                                            if (!empty($value && $value != '')) {
+                                                $currentValue = (array) $value;
+                                                if (!is_array($currentValue)) {
+                                                    $currentValue = json_decode($currentValue);
+                                                }
                                             }
+                                            // print_r($currentValue);
                                         @endphp
-                                        @foreach ($options as $option)
-                                            <div class="form-check form-check-inline">
-                                                <input type="checkbox" name="{{ $field['name'] }}[]"
-                                                    value="{{ $option }}" class="form-check-input"
-                                                    {{ in_array($option, $currentValue) ? 'checked' : '' }}>
-
-                                                <label class="form-check-label">
-                                                    {{ ucfirst($option) }}
-                                                </label>
-                                            </div>
-                                            {{-- After every input field --}}
-                                            @error($field['name'])
-                                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                                            @enderror
-                                        @endforeach
-                                        {{-- for toggle --}}
+                                        <div>
+                                            @foreach ($options as $option)
+                                                {{-- {{ $option . '=>' . print_r($currentValue) }} --}}
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" id="{{ $field['name'] }}_{{ $option }}"
+                                                        name="{{ $field['name'] }}[]" value="{{ $option }}"
+                                                        class="form-check-input"
+                                                        {{ in_array($option, $currentValue) ? 'checked' : '' }}>
+                                                    <label class="form-check-label"
+                                                        for="{{ $field['name'] }}_{{ $option }}">
+                                                        {{ ucfirst($option) }}
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     @elseif($field['type'] === 'toggle')
                                         @php
                                             $value = old(
@@ -218,7 +244,7 @@
                                                 {{ $field['label'] }}
                                             </label>
                                         </div>
-                                        {{-- After every input field --}}
+
                                         @error($field['name'])
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
@@ -240,7 +266,7 @@
                                         <div>
                                             Value: <span id="{{ $field['name'] }}_value">{{ $value }}</span>
                                         </div>
-                                        {{-- After every input field --}}
+
                                         @error($field['name'])
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
@@ -249,12 +275,12 @@
                                             id="{{ $field['name'] }}"
                                             placeholder="{{ !empty($field['placeholder']) && array_key_exists('placeholder', $field) ? $field['placeholder'] : '' }}"
                                             value="{{ $value }}" class="form-control" autocomplete="off">
-                                        {{-- After every input field --}}
+
                                         @error($field['name'])
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     @endif
-                                </div>
+                                @endif
                             </div>
                         </div>
                     @endforeach
@@ -279,25 +305,26 @@
             </script>
 
         </div>
-    @endsection
+    </div>
+@endsection
 
-    @push('footer-scripts')
-        <script src="{{ asset('vendor/crud/js/form-validation.js') }}"></script>
+@push('footer-scripts')
+    <script src="{{ asset('vendor/crud/js/form-validation.js') }}"></script>
 
-        <script>
-            let removedImages = [];
+    <script>
+        let removedImages = [];
 
-            $(document).on('click', '.remove-image', function() {
+        $(document).on('click', '.remove-image', function() {
 
-                let id = $(this).data('img_id');
+            let id = $(this).data('img_id');
 
-                removedImages.push(id);
-                // alert(removedImages);
-                $('#removed_images').val(removedImages.join(','));
+            removedImages.push(id);
+            // alert(removedImages);
+            $('#removed_images').val(removedImages.join(','));
 
-                // alert($('#removed_images').val())
+            // alert($('#removed_images').val())
 
-                $(this).closest('.image-container').remove();
-            });
-        </script>
-    @endpush
+            $(this).closest('.image-container').remove();
+        });
+    </script>
+@endpush

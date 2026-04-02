@@ -2,6 +2,7 @@
 
 @section('page-title', isset($table) ? 'List ' . formatTableName($table) : 'Records')
 
+
 @section('content')
     <div class="container ">
 
@@ -39,8 +40,7 @@
                     <tr>
                         <th>#</th>
                         @isset($visibleColumns)
-                            @foreach ($visibleColumns as $col)
-                                <th>{{ ucfirst(str_replace('_', ' ', $col)) }}</th>
+                            <th>{{ ucfirst(str_replace('_', ' ', $col)) }}</th>
                             @endforeach
                         @endisset
                         <th>Actions</th>
@@ -75,7 +75,6 @@
                                     <td>
                                         @php
                                             $rawValue = old($col, $row->$col ?? null);
-
                                             $values = is_string($rawValue) ? json_decode($rawValue, true) : $rawValue;
                                         @endphp
 
@@ -91,9 +90,6 @@
                                             {{ $row->$col ? 'Active' : 'Inactive' }}
                                         </span>
                                     </td>
-                                    {{-- for range --}}
-                                @elseif (isset($range) && $col == $range['name'])
-                                    <td>{{ $row->$col }}</td>
                                     {{-- for color picker --}}
                                 @elseif (isset($color) && $col == $color['name'])
                                     @if (isset($color['display_formate']) && $color['display_formate'] == 'color')
@@ -105,8 +101,62 @@
                                     @else
                                         <td>{{ $row->$col }}</td>
                                     @endif
+                                    {{-- for select --}}
+                                @elseif (isset($select_fields) && in_array($col, $select_fields))
+                                    @foreach ($select as $selection)
+                                        @if (isset($selection) && $col == $selection['name'])
+                                            {{-- for relation data --}}
+                                            @if (isset($relation_data) && array_key_exists($col, $relation_data))
+                                                <td>
+                                                    @if (isset($selection['select_type']) && $selection['select_type'] == 'multiple')
+                                                        @php
+                                                            $values = explode(',', $row->$col);
+                                                        @endphp
+                                                        @foreach ($values as $value)
+                                                            @php
+                                                                $badge = $value != '' ? 'badge bg-warning' : '';
+                                                            @endphp
+                                                            <span
+                                                                class="{{ $badge }}">{{ !empty($value) ? ucfirst($relation_data[$col][$value]) : '-' }}</span>
+                                                        @endforeach
+                                                    @else
+                                                        @php
+                                                            $badge =
+                                                                $$relation_data[$col][$row->$col] != ''
+                                                                    ? 'badge bg-success'
+                                                                    : '';
+                                                        @endphp
+                                                        <span
+                                                            class="{{ $badge }}">{{ !empty($relation_data[$col][$row->$col]) ? ucfirst($relation_data[$col][$row->$col]) : '-' }}</span>
+                                                    @endif
+                                                </td>
+                                            @else
+                                                <td>
+                                                    @if (isset($selection['select_type']) && $selection['select_type'] == 'multiple')
+                                                        @php
+                                                            $values = explode(',', $row->$col);
+                                                        @endphp
+                                                        @foreach ($values as $value)
+                                                            @php
+                                                                $badge = $value != '' ? 'badge bg-info' : '';
+                                                            @endphp
+                                                            <span
+                                                                class="{{ $badge }}">{{ !empty($value) ? ucfirst($value) : '-' }}</span>
+                                                        @endforeach
+                                                    @else
+                                                        @php
+                                                            $badge = $row->$col != '' ? 'badge bg-info' : '';
+                                                        @endphp
+                                                        <span
+                                                            class="{{ $badge }}"></span>{{ !empty($row->$col) ? ucfirst($row->$col) : '-' }}</span>
+                                                    @endif
+
+                                                </td>
+                                            @endif
+                                        @endif
+                                    @endforeach
                                 @else
-                                    <td>{{ !empty($row->$col) ? ucfirst($row->$col) : '' }}</td>
+                                    <td>{{ !empty($row->$col) ? ucfirst($row->$col) : '-' }}</td>
                                 @endif
                             @endforeach
 

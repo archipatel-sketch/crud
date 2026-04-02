@@ -30,150 +30,177 @@
                     data-table="{{ $table }}" enctype="multipart/form-data">
                     @csrf
 
-                    <div class="row g-3"> {{-- Bootstrap row with gutters --}}
+                    <div class="row g-3">
 
                         @foreach ($fields as $field)
                             @php
                                 $colClass = ($field['input_style'] ?? 'half') === 'full' ? 'col-12' : 'col-md-6';
                             @endphp
                             <div class="{{ $colClass }}">
-                                <div class="mb-3">
-                                    <label>{{ $field['label'] }}</label>
+                                @if (
+                                    (isset($field['display_on_create']) && $field['display_on_create'] != false) ||
+                                        !array_key_exists('display_on_create', $field))
+                                    <div class="mb-3">
+                                        <label>{{ $field['label'] }}</label>
 
-                                    {{-- Textarea --}}
-                                    @if ($field['type'] === 'textarea')
-                                        <textarea name="{{ $field['name'] }}" class="form-control" placeholder="{{ $field['placeholder'] ?? '' }}">{{ old($field['name']) }}</textarea>
-                                        @error($field['name'])
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
+                                        {{-- Textarea --}}
+                                        @if ($field['type'] == 'textarea')
+                                            <textarea name="{{ $field['name'] }}" class="form-control" placeholder="{{ $field['placeholder'] ?? '' }}">{{ old($field['name']) }}</textarea>
+                                            @error($field['name'])
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
 
-                                        {{-- File --}}
-                                    @elseif ($field['type'] == 'file')
-                                        <input type="file" name="{{ $field['name'] }}[]" id="{{ $field['name'] }}"
-                                            class="form-control"
-                                            {{ isset($field['upload_type']) && $field['upload_type'] == 'multiple' ? 'multiple' : '' }}
-                                            accept="image/*">
-                                        @error($field['name'])
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
+                                            {{-- File --}}
+                                        @elseif ($field['type'] == 'file')
+                                            <input type="file" name="{{ $field['name'] }}[]" id="{{ $field['name'] }}"
+                                                class="form-control"
+                                                {{ isset($field['upload_type']) && $field['upload_type'] == 'multiple' ? 'multiple' : '' }}
+                                                accept="image/*">
+                                            @error($field['name'])
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
 
-                                        {{-- Select --}}
-                                    @elseif ($field['type'] == 'select')
-                                        @php
-                                            $options = explode('|', $field['values']);
-                                            $currentValue = old($field['name'], $field['default'] ?? '');
-                                        @endphp
-                                        <select name="{{ $field['name'] }}" id="{{ $field['name'] }}" class="form-select">
-                                            <option value="">--Select--</option>
-                                            @foreach ($options as $option)
-                                                <option value="{{ $option }}"
-                                                    {{ $currentValue == $option ? 'selected' : '' }}>
-                                                    {{ ucfirst($option) }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error($field['name'])
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
+                                            {{-- Select --}}
+                                        @elseif ($field['type'] == 'select')
+                                            @php
+                                                $currentValue = (array) old($field['name'], $field['default'] ?? '');
+                                                if (!empty($field['values'])) {
+                                                    $options = explode('|', $field['values']);
+                                                }
+                                            @endphp
+                                            <select
+                                                name="{{ $field['name'] }}{{ isset($field['select_type']) ? '[]' : '' }}"
+                                                id="{{ $field['name'] }}" class="form-select"
+                                                {{ isset($field['select_type']) ? $field['select_type'] : '' }}>
+                                                @if (!isset($field['select_type']))
+                                                    <option value="">--Select--</option>
+                                                @endif
+                                                @if (isset($relation_array) && array_key_exists($field['name'], $relation_array))
+                                                    @if (isset($select_relation))
+                                                        @foreach ($relation_array as $key => $values)
+                                                            @foreach ($values as $key => $value)
+                                                                <option value="{{ $key }}"
+                                                                    {{ in_array($value, $currentValue) || in_array($key, $currentValue) ? 'selected' : '' }}>
+                                                                    {{ ucfirst($value) }}
+                                                                </option>
+                                                            @endforeach
+                                                        @endforeach
+                                                    @endif
+                                                @else
+                                                    @foreach ($options as $option)
+                                                        <option value="{{ $option }}"
+                                                            {{ in_array($option, $currentValue) ? 'selected' : '' }}>
+                                                            {{ ucfirst($option) }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
 
-                                        {{-- Radio --}}
-                                    @elseif($field['type'] == 'radio')
-                                        @php
-                                            $options = explode('|', $field['values']);
-                                            $currentValue = old($field['name'], $field['default'] ?? '');
-                                        @endphp
-                                        <div>
-                                            @foreach ($options as $option)
-                                                <div class="form-check form-check-inline">
-                                                    <input type="radio" id="{{ $field['name'] }}_{{ $option }}"
-                                                        name="{{ $field['name'] }}" value="{{ $option }}"
-                                                        class="form-check-input"
-                                                        {{ $currentValue == $option ? 'checked' : '' }}>
-                                                    <label class="form-check-label"
-                                                        for="{{ $field['name'] }}_{{ $option }}">
-                                                        {{ ucfirst($option) }}
-                                                    </label>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                        @error($field['name'])
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
+                                            @error($field['name'])
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
 
-                                        {{-- Checkbox --}}
-                                    @elseif($field['type'] == 'checkbox')
-                                        @php
-                                            $options = explode('|', $field['values']);
-                                            $currentValue = old($field['name'], $field['default'] ?? []);
-                                        @endphp
-                                        <div>
-                                            @foreach ($options as $option)
-                                                <div class="form-check form-check-inline">
-                                                    <input type="checkbox" id="{{ $field['name'] }}_{{ $option }}"
-                                                        name="{{ $field['name'] }}[]" value="{{ $option }}"
-                                                        class="form-check-input"
-                                                        {{ in_array($option, (array) $currentValue) ? 'checked' : '' }}>
-                                                    <label class="form-check-label"
-                                                        for="{{ $field['name'] }}_{{ $option }}">
-                                                        {{ ucfirst($option) }}
-                                                    </label>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                        @error($field['name'])
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
+                                            {{-- Radio --}}
+                                        @elseif($field['type'] == 'radio')
+                                            @php
+                                                $options = explode('|', $field['values']);
+                                                $currentValue = old($field['name'], $field['default'] ?? '');
+                                            @endphp
+                                            <div>
+                                                @foreach ($options as $option)
+                                                    <div class="form-check form-check-inline">
+                                                        <input type="radio"
+                                                            id="{{ $field['name'] }}_{{ $option }}"
+                                                            name="{{ $field['name'] }}" value="{{ $option }}"
+                                                            class="form-check-input"
+                                                            {{ $currentValue == $option ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="{{ $field['name'] }}_{{ $option }}">
+                                                            {{ ucfirst($option) }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            @error($field['name'])
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
 
-                                        {{-- Toggle --}}
-                                    @elseif($field['type'] === 'toggle')
-                                        @php
-                                            $value = old(
-                                                $field['name'],
-                                                $record->{$field['name']} ?? ($field['default'] ?? 0),
-                                            );
-                                        @endphp
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="{{ $field['name'] }}"
-                                                id="{{ $field['name'] }}" value="1" {{ $value ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="{{ $field['name'] }}">
-                                                {{ $field['label'] }}
-                                            </label>
-                                        </div>
-                                        @error($field['name'])
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
+                                            {{-- Checkbox --}}
+                                        @elseif($field['type'] == 'checkbox')
+                                            @php
+                                                $options = explode('|', $field['values']);
+                                                $currentValue = old($field['name'], $field['default'] ?? []);
+                                            @endphp
+                                            <div>
+                                                @foreach ($options as $option)
+                                                    <div class="form-check form-check-inline">
+                                                        <input type="checkbox"
+                                                            id="{{ $field['name'] }}_{{ $option }}"
+                                                            name="{{ $field['name'] }}[]" value="{{ $option }}"
+                                                            class="form-check-input"
+                                                            {{ in_array($option, (array) $currentValue) ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="{{ $field['name'] }}_{{ $option }}">
+                                                            {{ ucfirst($option) }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            @error($field['name'])
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
 
-                                        {{-- Range --}}
-                                    @elseif($field['type'] === 'range')
-                                        @php
-                                            $value = old(
-                                                $field['name'],
-                                                $record->{$field['name']} ?? ($field['default'] ?? 0),
-                                            );
-                                        @endphp
-                                        <input type="range" name="{{ $field['name'] }}" id="{{ $field['name'] }}"
-                                            class="form-range" min="{{ $field['min'] ?? 0 }}"
-                                            max="{{ $field['max'] ?? 100 }}" step="{{ $field['step'] ?? 1 }}"
-                                            value="{{ $value }}"
-                                            oninput="document.getElementById('{{ $field['name'] }}_value').innerText = this.value">
-                                        <div>Value: <span id="{{ $field['name'] }}_value">{{ $value }}</span>
-                                        </div>
-                                        @error($field['name'])
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
+                                            {{-- Toggle --}}
+                                        @elseif($field['type'] === 'toggle')
+                                            @php
+                                                $value = old(
+                                                    $field['name'],
+                                                    $record->{$field['name']} ?? ($field['default'] ?? 0),
+                                                );
+                                            @endphp
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" name="{{ $field['name'] }}"
+                                                    id="{{ $field['name'] }}" value="1"
+                                                    {{ $value ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="{{ $field['name'] }}">
+                                                    {{ $field['label'] }}
+                                                </label>
+                                            </div>
+                                            @error($field['name'])
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
 
-                                        {{-- Default Input --}}
-                                    @else
-                                        <input type="{{ $field['type'] }}" name="{{ $field['name'] }}"
-                                            id="{{ $field['name'] }}" value="{{ old($field['name']) }}"
-                                            class="form-control" placeholder="{{ $field['placeholder'] ?? '' }}">
-                                        @error($field['name'])
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    @endif
+                                            {{-- Range --}}
+                                        @elseif($field['type'] === 'range')
+                                            @php
+                                                $value = old(
+                                                    $field['name'],
+                                                    $record->{$field['name']} ?? ($field['default'] ?? 0),
+                                                );
+                                            @endphp
+                                            <input type="range" name="{{ $field['name'] }}" id="{{ $field['name'] }}"
+                                                class="form-range" min="{{ $field['min'] ?? 0 }}"
+                                                max="{{ $field['max'] ?? 100 }}" step="{{ $field['step'] ?? 1 }}"
+                                                value="{{ $value }}"
+                                                oninput="document.getElementById('{{ $field['name'] }}_value').innerText = this.value">
+                                            <div>Value: <span id="{{ $field['name'] }}_value">{{ $value }}</span>
+                                            </div>
+                                            @error($field['name'])
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
 
-                                </div>
-                            </div>{{-- mb-3 --}}
+                                            {{-- Default Input --}}
+                                        @else
+                                            <input type="{{ $field['type'] }}" name="{{ $field['name'] }}"
+                                                id="{{ $field['name'] }}" value="{{ old($field['name']) }}"
+                                                class="form-control" placeholder="{{ $field['placeholder'] ?? '' }}">
+                                            @error($field['name'])
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
                         @endforeach
 
                     </div> {{-- row --}}
@@ -190,7 +217,6 @@
                 </form>
         </div>
         @endif
-
     </div>
 @endsection
 
