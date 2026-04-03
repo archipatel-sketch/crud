@@ -568,14 +568,34 @@ class CrudController extends Controller
                 // Handle file fields
                 if ($field['type'] === 'file') {
 
-                   if ($request->hasFile($field['name'])) {
-                        $rules[$field['name']] = 'array';
-                        $rules[$field['name'].'.*'] = 'image|mimes:jpg,jpeg,png|max:2048';
+                    if ($request->hasFile($field['name'])) {
+                        // $rules[$field['name']] = $field['rules'];
+                        $rules[$field['name']] = 'nullable';
+                        $rules[$field['name'].'.*'] = 'image|mimes:jpg,jpeg,png,webp|max:2048';
+                        if (isset($field['upload_type']) && $field['upload_type'] == 'multiple') {
+
+                            // simple rules
+                            if (! str_contains('array', $rules[$field['name']])) {
+                                $rules[$field['name']] = $rules[$field['name']].'|array';
+                            }
+                            // for all images
+                            $all_images_validation = explode('|', $field['rules']);
+
+                            foreach ($all_images_validation as $validate) {
+                                if ($validate == 'nullable' || $validate == 'required' || $validate == 'sometimes') {
+                                    $index = array_search($validate, $all_images_validation);
+                                    unset($all_images_validation[$index]);
+                                }
+
+                            }
+                            // reaaranged and assign for the validation
+                            $rules[$field['name'].'.*'] = implode('|', array_values($all_images_validation));
+                        }
                     }
 
                     continue;
-
                 }
+                
                 // handle checkbox fields
                 if ($field['type'] === 'checkbox') {
                     $rules[$field['name']] = 'nullable|array';
