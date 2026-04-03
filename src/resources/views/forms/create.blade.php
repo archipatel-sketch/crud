@@ -52,7 +52,14 @@
 
                                             {{-- File --}}
                                         @elseif ($field['type'] == 'file')
-                                            <input type="file" name="{{ $field['name'] }}[]" id="{{ $field['name'] }}"
+                                         @php
+                                                $multi_array =
+                                                    isset($field['upload_type']) && $field['upload_type'] == 'multiple'
+                                                        ? '[]'
+                                                        : '';
+                                            @endphp
+
+                                            <input type="file" name="{{ $field['name'] }}{{ $multi_array }}" id="{{ $field['name'] }}"
                                                 class="form-control"
                                                 {{ isset($field['upload_type']) && $field['upload_type'] == 'multiple' ? 'multiple' : '' }}
                                                 accept="image/*">
