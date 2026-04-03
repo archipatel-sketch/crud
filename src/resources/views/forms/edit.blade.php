@@ -94,9 +94,15 @@
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                         {{-- for image --}}
-                                    @elseif ($field['name'] == 'image')
+                                    @elseif ($field['type'] == 'image')
+                                        @php
+                                            $multi_array =
+                                                isset($field['upload_type']) && $field['upload_type'] == 'multiple'
+                                                    ? '[]'
+                                                    : '';
+                                        @endphp
                                         {{-- for image upload --}}
-                                        <input type="{{ $field['type'] }}" name="{{ $field['name'] }}[]"
+                                        <input type="{{ $field['type'] }}" name="{{ $field['name'] }}{{ $multi_array }}"
                                             id="{{ $field['name'] }}" class="form-control"
                                             placeholder="{{ !empty($field['placeholder']) && array_key_exists('placeholder', $field) ? $field['placeholder'] : '' }}"
                                             {{ isset($field['upload_type']) && $field['upload_type'] == 'multiple' ? 'multiple' : '' }}
