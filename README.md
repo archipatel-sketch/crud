@@ -13,7 +13,7 @@ A Laravel package to perform **dynamic CRUD operations** with configurable form 
 - **Graceful Error Handling:** Throws a `TableNotFoundException` for non-existent tables.
 - **DataTables Integration:** Displays data in responsive DataTables with configurable visibility.
 - **Supports Input Types:** `text`, `password`, `email`, `image`, `textarea`, `date`, `number`, `select`, `radio`, `checkbox`.
-
+- **Tables & Attachments On Seprate Table** when you migrate this package migration automatically create `users`, `posts` and `attachments` for handling simple crud no need to manually handles attchments.
 ---
 
 ##  Installation
