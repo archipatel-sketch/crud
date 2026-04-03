@@ -568,14 +568,9 @@ class CrudController extends Controller
                 // Handle file fields
                 if ($field['type'] === 'file') {
 
-                    if (isset($field['upload_type']) && $field['upload_type'] == 'multiple') {
-                        if (! str_contains('array', $field['rules'])) {
-                            $rules[$field['name']] = 'nullable|array';
-                            $rules[$field['name'].'.*'] = 'sometimes|image|mimes:jpg,jpeg,png|max:2048';
-                        }
-                    }else{
-                        $rules[$field['name']] = 'nullable';
-                        $rules[$field['name'].'.*'] = 'sometimes|image|mimes:jpg,jpeg,png|max:2048';
+                   if ($request->hasFile($field['name'])) {
+                        $rules[$field['name']] = 'array';
+                        $rules[$field['name'].'.*'] = 'image|mimes:jpg,jpeg,png|max:2048';
                     }
 
                     continue;
