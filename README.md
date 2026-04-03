@@ -70,6 +70,23 @@ return [
             'rules' => 'required|min:6',
             'visible' => false, // Hidden in DataTables
         ],
+        [
+            'label' => 'City',
+            'name' => 'city',
+            'type' => 'select',
+            'relation' => [
+                'table_name' => 'city',
+                'label' => 'city_name',
+                'values' => 'id',
+            ],
+            'default' => 'Surat',
+            'rules' => 'nullable|in:relation.values',
+            'visible' => true,
+            'select_type' => 'single',
+            'display_column' => 'relation.label', // display on Data
+            'display_on_create' => true,
+            'display_on_edit' => true,
+        ],
 
     ],
 
