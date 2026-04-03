@@ -183,7 +183,7 @@ return [
         [
             'label' => 'Featured Image',
             'name' => 'featured_image',
-            'type' => 'image',
+            'type' => 'file',
             'upload_type' => 'multiple',
             'rules' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'visible' => true,
