@@ -80,14 +80,29 @@ return [
 ```
 👉 **Field Definition Parameters**
 
-| Parameter     | Description                                                                 |
-| ------------- | --------------------------------------------------------------------------- |
-| `label`       | Display name in forms and table headers                                     |
-| `name`        | Database column name                                                        |
-| `type`        | Input type (`text`, `email`, `password`, `file`, `image`, `textarea`, etc.) |
-| `rules`       | Laravel validation rules                                                    |
-| `visible`     | Show column in DataTables (`true` / `false`)                                |
-| `upload_type` | For `file` or `image` fields: `'single'` or `'multiple'`                    |
+| Parameter           | Description                                                                 |
+| ------------------- | --------------------------------------------------------------------------- |
+| `label`             | Display name in forms and table headers                                     |
+| `name`              | Database column name                                                        |
+| `type`              | Input type (`text`, `email`, `password`, `file`, `image`, `textarea`, etc.) |
+| `placeholder`       | Display on the form input field for enter data specification                |
+| `default`           | Set default value for input fields                                          |
+| `values `           | Set values for `radio`, `checkbox`, `select` with `|` seprator.             |
+| `rules`             | Laravel validation rules                                                    |
+| `visible`           | Show column in DataTables (`true` / `false`)                                |
+| `upload_type`       | For `file` or `image` fields: `'single'` or `'multiple'`                    |
+| `select_type`       | For `select` fields: `'single'` or `'multiple'`                             |
+| `upload_type`       | For `file` or `image` fields: `'single'` or `'multiple'`                    |
+| `input_style`       | For styling form input fields: `full` and `half`                            |
+| `display_on_create` | Display field on create form: `true` or `false`                             |
+| `display_on_edit`   | Display field on edit form:  `true` or `false`                              |
+| `relation`          | Fetch relatoinal table data. This key use with `select` input type.with relation key added this three key value.       |
+|                     | `table_name` : set relation join table name. it's required.                 |
+|                     | `label` : specify column name which is display in the optoins in select input. it's required. |
+|                     | `values` : specify column name which is display in the optoins values store on db in select input. it's required. |
+| `display_column`    | Use in `select` input. if set relation key for join table then set it.Mainly use for which column you want to display on data listing time
+                        It define with `relation.{label}` or `relation.{value}`
+|
 
 
 👉 **Database Configuration for Query Management**
