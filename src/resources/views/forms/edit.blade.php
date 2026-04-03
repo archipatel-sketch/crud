@@ -94,7 +94,7 @@
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                         {{-- for image --}}
-                                    @elseif ($field['type'] == 'image')
+                                    @elseif ($field['type'] == 'file')
                                         @php
                                             $multi_array =
                                                 isset($field['upload_type']) && $field['upload_type'] == 'multiple'
