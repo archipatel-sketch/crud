@@ -3,6 +3,7 @@
 namespace ArchipatelSketch\Crud\Http\Controllers;
 
 use ArchipatelSketch\Crud\Exceptions\TableNotFoundException;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Exception;
+
+use function Laravel\Prompts\select;
 
 class CrudController extends Controller
 {
@@ -186,15 +188,41 @@ class CrudController extends Controller
         foreach ($fields as $field) {
 
             // move file nd save in db
-            if ($field['type'] === 'file' && $request->hasFile($field['name'])) {
+            if ($field['type'] == 'file' && $request->hasFile($field['name'])) {
 
-                $files = $request->file($field['name']);
-                $attachmentIds = [];
+                if (isset($field['upload_type']) && $field['upload_type'] == 'multiple') {
+                    // multiple
+                    $files = $request->file($field['name']);
+                    $attachmentIds = [];
+                    foreach ($files as $file) {
+                        if ($file->isValid()) {
 
-                foreach ($files as $file) {
+                            $originalName = $file->getClientOriginalName();
+                            $destinationPath = public_path("assets/images/$table");
 
+                            if (! file_exists($destinationPath)) {
+                                mkdir($destinationPath, 0755, true);
+                            }
+
+                            $finalName = time().'_'.Str::random(6).'.'.$file->getClientOriginalExtension();
+                            $file->move($destinationPath, $finalName);
+                            $attachmentId = DB::table('attachments')->insertGetId([
+                                'attachment_name' => $finalName,
+                                'file_path' => "assets/images/$table/".$finalName,
+                                'original_name' => $originalName,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ]);
+
+                            $attachmentIds[] = $attachmentId;
+                        }
+                    }
+
+                    $validated[$field['name']] = implode(',', $attachmentIds);
+                } else {
+                    // single
+                    $file = $request->file($field['name']);
                     if ($file->isValid()) {
-
                         $originalName = $file->getClientOriginalName();
                         $destinationPath = public_path("assets/images/$table");
 
@@ -212,13 +240,11 @@ class CrudController extends Controller
                             'updated_at' => now(),
                         ]);
 
-                        $attachmentIds[] = $attachmentId;
+                        $validated[$field['name']] = $attachmentId;
                     }
                 }
 
-                $validated[$field['name']] = implode(',', $attachmentIds);
             }
-
             // for checkbox store values as string
             if ($field['type'] == 'checkbox') {
                 if ($request->has($field['name']) && is_array($request->input($field['name'])) && is_array($validated[$field['name']])) {
@@ -248,7 +274,6 @@ class CrudController extends Controller
         if (isset($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         }
-
 
         DB::table($table)->insert($validated);
 
@@ -326,7 +351,6 @@ class CrudController extends Controller
         $record = DB::table($table)->where('id', $id)->first();
 
         $rules = $this->createRules($request, $table, $fields);
-
         try {
             $validated = $request->validate($rules);
         } catch (ValidationException $e) {
@@ -337,12 +361,10 @@ class CrudController extends Controller
 
             // --   -------------- FILE HANDLING ----------------
             if ($field['type'] === 'file') {
-
                 // Get old IDs
                 $oldIds = ! empty($record->{$field['name']})
                     ? explode(',', $record->{$field['name']})
                     : [];
-
                 // ---------------- REMOVE IMAGES ----------------
                 if ($request->filled('removed_images')) {
 
@@ -368,48 +390,81 @@ class CrudController extends Controller
 
                 // ---------------- ADD NEW FILES ----------------
                 if ($request->hasFile($field['name'])) {
+                    if (isset($field['upload_type']) && $field['upload_type'] == 'multiple') {
 
-                    $files = $request->file($field['name']);
+                        // multiple
+                        $files = $request->file($field['name']);
+                        foreach ($files as $file) {
+                            if ($file->isValid()) {
+                                $originalName = $file->getClientOriginalName();
+                                $destinationPath = public_path("assets/images/$table");
+                                if (! file_exists($destinationPath)) {
+                                    mkdir($destinationPath, 0755, true);
+                                }
+                                $finalName = time().'_'.Str::random(6).'.'.$file->getClientOriginalExtension();
+                                $file->move($destinationPath, $finalName);
 
-                    foreach ($files as $file) {
+                                $attachmentId = DB::table('attachments')->insertGetId([
+                                    'attachment_name' => $finalName, // unique DB name
+                                    'file_path' => "assets/images/$table/".$finalName,
+                                    'original_name' => $originalName,
+                                    'created_at' => now(),
+                                    'updated_at' => now(),
+                                ]);
+                                $oldIds[] = $attachmentId;
+                            }
+                        }
+                        $validated[$field['name']] = ! empty($oldIds) ? implode(',', $oldIds) : null;
 
+                    } else {
+                        // single
+                        $file = $request->file($field['name']);
                         if ($file->isValid()) {
 
-                            $originalName = $file->getClientOriginalName();
-                            $extension = $file->getClientOriginalExtension();
-                            $nameWithoutExt = pathinfo($originalName, PATHINFO_FILENAME);
+                            // if not unset and set image then delete old image
+                            $old_image_id = DB::table($table)->select("{$field['name']}")->where('id', $id)->get()->toArray();
+                            foreach ($old_image_id as $images) {
+                                foreach ($images as $image_id) {
+                                    $multi_select = explode(',', $image_id);
+                                    foreach ($multi_select as $record) {
+                                        $attachment = DB::table('attachments')->select('attachments.*')->where('id', $record)->first();
 
+                                        if (! empty($attachment) && !empty ($attachment->file_path)) {
+                                            $filePath = public_path($attachment->file_path);
+                                            if (file_exists($filePath)) {
+                                                // Delete DB record
+                                                DB::table('attachments')->where('id', $attachment->id)->delete();
+                                                unlink($filePath);
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+
+                            // save new image in db
+                            $originalName = $file->getClientOriginalName();
                             $destinationPath = public_path("assets/images/$table");
+
                             if (! file_exists($destinationPath)) {
                                 mkdir($destinationPath, 0755, true);
                             }
 
-                            // Avoid overwriting same filename
-                            // $finalName = $originalName;
-                            // $counter = 1;
-                            // while (file_exists($destinationPath.'/'.$finalName)) {
-                            //     $finalName = $nameWithoutExt.'('.$counter.').'.$extension;
-                            //     $counter++;
-                            // }
                             $finalName = time().'_'.Str::random(6).'.'.$file->getClientOriginalExtension();
                             $file->move($destinationPath, $finalName);
-
                             $attachmentId = DB::table('attachments')->insertGetId([
-                                'attachment_name' => $finalName, // unique DB name
+                                'attachment_name' => $finalName,
                                 'file_path' => "assets/images/$table/".$finalName,
                                 'original_name' => $originalName,
                                 'created_at' => now(),
                                 'updated_at' => now(),
                             ]);
-
-                            $oldIds[] = $attachmentId;
+                           $validated[$field['name']]=$attachmentId;
                         }
                     }
                 }
 
-                $validated[$field['name']] = ! empty($oldIds) ? implode(',', $oldIds) : null;
             }
-
             // for checkbox store values as string
             if ($field['type'] == 'checkbox') {
                 if ($request->has($field['name']) && is_array($request->input($field['name'])) && is_array($validated[$field['name']])) {
@@ -434,7 +489,6 @@ class CrudController extends Controller
             }
 
         }
-
         // for password
         if (! empty($request->password)) {
             $validated['password'] = Hash::make($request->password);
@@ -553,6 +607,7 @@ class CrudController extends Controller
 
                     continue;
                 }
+
                 // Handle password optional on edit
                 if ($field['type'] === 'password' && $request->route('id')) {
                     $rule = str_replace('required', 'nullable', $rule);
@@ -568,34 +623,25 @@ class CrudController extends Controller
                 // Handle file fields
                 if ($field['type'] === 'file') {
 
-                    if ($request->hasFile($field['name'])) {
-                        // $rules[$field['name']] = $field['rules'];
-                        $rules[$field['name']] = 'nullable';
-                        $rules[$field['name'].'.*'] = 'image|mimes:jpg,jpeg,png,webp|max:2048';
-                        if (isset($field['upload_type']) && $field['upload_type'] == 'multiple') {
-
-                            // simple rules
-                            if (! str_contains('array', $rules[$field['name']])) {
-                                $rules[$field['name']] = $rules[$field['name']].'|array';
-                            }
-                            // for all images
-                            $all_images_validation = explode('|', $field['rules']);
-
-                            foreach ($all_images_validation as $validate) {
-                                if ($validate == 'nullable' || $validate == 'required' || $validate == 'sometimes') {
-                                    $index = array_search($validate, $all_images_validation);
-                                    unset($all_images_validation[$index]);
-                                }
-
-                            }
-                            // reaaranged and assign for the validation
-                            $rules[$field['name'].'.*'] = implode('|', array_values($all_images_validation));
+                    $all_images_validation = explode('|', $field['rules']);
+                    $file = $files = [];
+                    foreach ($all_images_validation as $validate) {
+                        if ($validate != 'nullable' && $validate != 'required' && $validate != 'sometimes') {
+                            array_push($files, $validate);
+                        } else {
+                            array_push($file, $validate);
                         }
+                    }
+                    $rules[$field['name']] = implode('|', $file);
+                    $rules[$field['name'].'.*'] = implode('|', $files);
+
+                    if (isset($field['upload_type']) && $field['upload_type'] == 'multiple') {
+                        $rules[$field['name']] = $rules[$field['name']].'|array';
                     }
 
                     continue;
+
                 }
-                
                 // handle checkbox fields
                 if ($field['type'] === 'checkbox') {
                     $rules[$field['name']] = 'nullable|array';
@@ -724,6 +770,7 @@ class CrudController extends Controller
                     continue;
 
                 }
+
                 $rules[$field['name']] = $rule;
 
             }
