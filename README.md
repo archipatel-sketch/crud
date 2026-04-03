@@ -100,8 +100,7 @@ return [
 |                     | `table_name` : set relation join table name. it's required.                 |
 |                     | `label` : specify column name which is display in the optoins in select input. it's required. |
 |                     | `values` : specify column name which is display in the optoins values store on db in select input. it's required. |
-| `display_column`    | Use in `select` input. if set relation key for join table then set it.Mainly use for which column you want to display on data listing time
-                        It define with relation keys `relation.{label}` or `relation.{values}` | 
+| `display_column`    | Use in `select` input. if set relation key for join table then set it.Mainly use for which column you want to display on data listing time.It define with relation keys `relation.label` or `relation.values` | 
 
 
 👉 **Database Configuration for Query Management**
