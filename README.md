@@ -87,7 +87,7 @@ return [
 | `type`              | Input type (`text`, `email`, `password`, `file`, `image`, `textarea`, etc.) |
 | `placeholder`       | Display on the form input field for enter data specification                |
 | `default`           | Set default value for input fields                                          |
-| `values `           | Set values for `radio`, `checkbox`, `select` with `|` seprator.             |
+| `values `           | Set values for `radio`, `checkbox`, `select` with `\|` seprator.             |
 | `rules`             | Laravel validation rules                                                    |
 | `visible`           | Show column in DataTables (`true` / `false`)                                |
 | `upload_type`       | For `file` or `image` fields: `'single'` or `'multiple'`                    |
