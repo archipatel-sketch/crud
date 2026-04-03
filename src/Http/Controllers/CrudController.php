@@ -346,10 +346,20 @@ class CrudController extends Controller
                 'message' => "Form fields not configured for '{$table}'.",
             ], 404);
         }
+        $columnsToCheck = array_map(fn ($field) => $field['name'], $fields);
+        $tableColumns = Schema::getColumnListing($table);
+        $missingColumns = array_diff($columnsToCheck, $tableColumns);
+
+        if (! empty($missingColumns)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Cannot insert record. Missing columns: '.implode(', ', $missingColumns));
+        }
 
         // Get existing record
         $record = DB::table($table)->where('id', $id)->first();
 
+        // check rules
         $rules = $this->createRules($request, $table, $fields);
         try {
             $validated = $request->validate($rules);
