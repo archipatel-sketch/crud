@@ -94,15 +94,14 @@ return [
 | `select_type`       | For `select` fields: `'single'` or `'multiple'`                             |
 | `upload_type`       | For `file` or `image` fields: `'single'` or `'multiple'`                    |
 | `input_style`       | For styling form input fields: `full` and `half`                            |
-| `display_on_create` | Display field on create form: `true` or `false`                             |
-| `display_on_edit`   | Display field on edit form:  `true` or `false`                              |
+| `display_on_create` | Display field on create form: `true` or `false` default `true`                            |
+| `display_on_edit`   | Display field on edit form:  `true` or `false` default `false`                             |
 | `relation`          | Fetch relatoinal table data. This key use with `select` input type.with relation key added this three key value.       |
 |                     | `table_name` : set relation join table name. it's required.                 |
 |                     | `label` : specify column name which is display in the optoins in select input. it's required. |
 |                     | `values` : specify column name which is display in the optoins values store on db in select input. it's required. |
 | `display_column`    | Use in `select` input. if set relation key for join table then set it.Mainly use for which column you want to display on data listing time
-                        It define with `relation.{label}` or `relation.{value}`
-|
+                        It define with relation keys `relation.{label}` or `relation.{values}` | 
 
 
 👉 **Database Configuration for Query Management**
