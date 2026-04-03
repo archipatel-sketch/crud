@@ -35,9 +35,9 @@ class CrudServiceProvider extends ServiceProvider
 
 
         // Publish seeders to the application's database/seeders directory
-        // $this->publishes([
-        //     __DIR__.'/../database/seeders' => database_path('seeders'),
-        // ], 'crud-seeds');
+        $this->publishes([
+            __DIR__.'/../Database/seeders' => database_path('seeders'),
+        ], 'crud-seeds');
 
 
         // Include a helpers file containing custom utility functions.
