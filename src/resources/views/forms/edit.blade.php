@@ -37,6 +37,7 @@
         <div class="shadow p-2 mb-2 rounded bg-light mt-5 border border-light">
             <h1 class="text-center m-3 text-dark">Edit {{ isset($table) ? formatTableName($table) : 'Record' }}</h1>
         </div>
+        <div class="container mt-5 p-5 border border-light rounded shadow p-3 mb-5 bg-light">
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -50,7 +51,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
-        <div class="container mt-5 p-5 border border-light rounded shadow p-3 mb-5 bg-light">
 
             <form id="form-validation" method="POST"
                 action="{{ route('crud.update', ['table' => $table, 'id' => $record->id]) }}"
