@@ -123,7 +123,7 @@
                                                     @else
                                                         @php
                                                             $badge =
-                                                                $$relation_data[$col][$row->$col] != ''
+                                                                $relation_data[$col][$row->$col] != ''
                                                                     ? 'badge bg-success'
                                                                     : '';
                                                         @endphp
