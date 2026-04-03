@@ -93,7 +93,7 @@ return [
 | `upload_type`       | For `file` or `image` fields: `'single'` or `'multiple'`                    |
 | `select_type`       | For `select` fields: `'single'` or `'multiple'`                             |
 | `upload_type`       | For `file` or `image` fields: `'single'` or `'multiple'`                    |
-| `input_style`       | For styling form input fields: `full` and `half`                            |
+| `input_style`       | For styling form input fields: `full` and `half` default `half`                            |
 | `display_on_create` | Display field on create form: `true` or `false` default `true`                            |
 | `display_on_edit`   | Display field on edit form:  `true` or `false` default `false`                             |
 | `relation`          | Fetch relatoinal table data. This key use with `select` input type.with relation key added this three key value.       |
