@@ -52,15 +52,15 @@
 
                                             {{-- File --}}
                                         @elseif ($field['type'] == 'file')
-                                         @php
+                                            @php
                                                 $multi_array =
                                                     isset($field['upload_type']) && $field['upload_type'] == 'multiple'
                                                         ? '[]'
                                                         : '';
                                             @endphp
 
-                                            <input type="file" name="{{ $field['name'] }}{{ $multi_array }}" id="{{ $field['name'] }}"
-                                                class="form-control"
+                                            <input type="file" name="{{ $field['name'] }}{{ $multi_array }}"
+                                                id="{{ $field['name'] }}" class="form-control"
                                                 {{ isset($field['upload_type']) && $field['upload_type'] == 'multiple' ? 'multiple' : '' }}
                                                 accept="image/*">
                                             @error($field['name'])
@@ -74,9 +74,12 @@
                                                 if (!empty($field['values'])) {
                                                     $options = explode('|', $field['values']);
                                                 }
+                                                $multi_select =
+                                                    isset($field['select_type']) && $field['select_type'] == 'multiple'
+                                                        ? '[]'
+                                                        : '';
                                             @endphp
-                                            <select
-                                                name="{{ $field['name'] }}{{ isset($field['select_type']) ? '[]' : '' }}"
+                                            <select name="{{ $field['name'] }}{{ $multi_select }}"
                                                 id="{{ $field['name'] }}" class="form-select"
                                                 {{ isset($field['select_type']) ? $field['select_type'] : '' }}>
                                                 @if (!isset($field['select_type']))
