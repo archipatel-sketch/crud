@@ -143,8 +143,12 @@
                                             if (!empty($field['values'])) {
                                                 $options = explode('|', $field['values']);
                                             }
+                                            $multi_select =
+                                                    isset($field['select_type']) && $field['select_type'] == 'multiple'
+                                                        ? '[]'
+                                                        : '';
                                         @endphp
-                                        <select name="{{ $field['name'] }}{{ isset($field['select_type']) ? '[]' : '' }}"
+                                        <select name="{{ $field['name'] }}{{ $multi_select }}"
                                             id="{{ $field['name'] }}" class="form-select"
                                             {{ isset($field['select_type']) ? $field['select_type'] : '' }}>
                                             @if (!isset($field['select_type']))
