@@ -297,7 +297,7 @@ class CrudController extends Controller
 
         $image = collect(config('form-fields.'.$table))->where('type', 'file')->pluck('name')->first();
         if ($image != '' && $image != null) {
-            $ids = explode(',', $record->image);
+            $ids = explode(',', $record->$image);
             $images = DB::table('attachments')->whereIn('id', $ids)->pluck('file_path', 'id')->toArray();
         }
 
